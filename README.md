@@ -2,25 +2,32 @@
 
 A collection of engineering projects and research, focusing on autonomous AI systems and automation tools.
 
+**Featured Project:** Hybrid AI Video Generation System (combining insights from Wondershare Filmora + elliottsax/once)
+
 ## Projects
 
-### 1. Video Automation System
+### 1. Enhanced Video Automation System
 **Location:** `/video-automation/`
 
-An advanced automated video generation pipeline that transforms text topics into high-quality educational explainer videos. This system leverages modern AI APIs, media processing, and React-based video composition to create YouTube-ready content.
+An advanced automated video generation pipeline that combines insights from **reverse engineering Wondershare Filmora** with the **"once" automated video system**. Transforms text topics into high-quality educational explainer videos using multiple AI models.
 
 **Key Features:**
-- Automated script generation using GPT-4
-- AI-powered image generation (DALL-E 3, SDXL)
-- Professional narration with ElevenLabs TTS
-- React-based video composition with Remotion
-- GPU-accelerated rendering with FFmpeg
+- **Multi-Model AI System** (inspired by Filmora):
+  - Google Veo 3.0/3.1 for text/image-to-video with auto-audio
+  - OpenAI Sora 2 for high-quality image-to-video
+  - Kelin model for cost-effective generation
+  - Dynamic model selection based on scene importance
+- **Automated script generation** using GPT-4 (from "once")
+- **AI-powered image generation** (DALL-E 3, SDXL)
+- **Professional narration** with ElevenLabs TTS
+- **React-based video composition** with Remotion
+- **GPU-accelerated rendering** with FFmpeg
 
 **Performance Metrics:**
 - Pipeline Time: 30-45 minutes per 5-8 minute video
-- Cost: $2-12 per video
+- Cost: $2-3 (economy) to $12-15 (premium) per video
 - Automation Rate: 90-95% success rate
-- Output: 1080p YouTube-ready videos
+- Output: 720p-1080p YouTube-ready videos with auto-generated audio
 
 ## Repository Structure
 
@@ -48,15 +55,32 @@ cd video-automation
 ## Technologies Used
 
 - **Languages:** Python (88.4%), TypeScript (7.9%), Shell (3.1%)
-- **AI/ML:** GPT-4, DALL-E 3, Stable Diffusion XL, ElevenLabs TTS
-- **Media Processing:** FFmpeg, Remotion, Whisper
-- **Infrastructure:** PostgreSQL, Redis, Docker
+- **AI/ML Models:**
+  - **Text-to-Video:** Google Veo 3.0/3.1, Kelin (proprietary)
+  - **Image-to-Video:** OpenAI Sora 2, Google Veo 3.1, Standard models
+  - **Text Generation:** GPT-4
+  - **Image Generation:** DALL-E 3, Stable Diffusion XL
+  - **Speech Synthesis:** ElevenLabs TTS
+  - **Speech Recognition:** OpenAI Whisper
+- **Media Processing:** FFmpeg (GPU-accelerated), Remotion, spaCy NLP
+- **Infrastructure:** PostgreSQL, Redis, Docker, Temporal.io
 
 ## Documentation
 
-- [Video Automation Reverse Engineering Report](video-automation/docs/REVERSE_ENGINEERING_REPORT.md)
-- [Production Guide](video-automation/docs/PRODUCTION_GUIDE_V2.md)
-- [Video Automation README](video-automation/README.md)
+### Reverse Engineering Reports
+- [Filmora AI System Reverse Engineering](video-automation/docs/FILMORA_REVERSE_ENGINEERING.md) - Analysis of Wondershare Filmora's multi-model AI architecture
+- [Once System Analysis](video-automation/docs/REVERSE_ENGINEERING_REPORT.md) - Original automated video pipeline analysis
+
+### Technical Guides
+- [Production Guide](video-automation/docs/PRODUCTION_GUIDE_V2.md) - Complete system architecture and production deployment
+- [Video Automation README](video-automation/README.md) - Setup and usage instructions
+
+### Key Innovations from Combining Both Systems
+1. **JSON-based AI model configuration** (from Filmora) + **Python orchestration** (from Once)
+2. **Multi-model routing** with dynamic selection based on scene importance
+3. **Veo 3.0 auto-audio generation** combined with **ElevenLabs narration**
+4. **Cost optimization** through intelligent model selection (economy/standard/premium tiers)
+5. **Enhanced quality** with Sora 2 for image-to-video transitions
 
 ## Contributing
 

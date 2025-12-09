@@ -1,0 +1,75 @@
+# Core Python dependencies
+python>=3.11
+asyncio>=3.4.3
+aiohttp>=3.8.0
+aiofiles>=23.0.0
+
+# Video Processing
+ffmpeg-python>=0.2.0
+opencv-python>=4.8.0
+pillow>=10.0.0
+imageio>=2.31.0
+moviepy>=1.0.3
+
+# AI/ML APIs
+openai>=1.0.0
+anthropic>=0.7.0
+replicate>=0.15.0
+stability-sdk>=0.8.0
+
+# Audio Processing
+elevenlabs>=0.2.0
+pydub>=0.25.0
+librosa>=0.10.0
+soundfile>=0.12.0
+whisper-timestamped>=1.14.0
+
+# NLP and Text Processing
+spacy>=3.6.0
+nltk>=3.8.0
+textstat>=0.7.3
+
+# Web Framework (for API interface)
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.0.0
+
+# Database and Caching
+redis>=5.0.0
+sqlalchemy>=2.0.0
+alembic>=1.12.0
+asyncpg>=0.28.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0.0
+jsonschema>=4.19.0
+rich>=13.5.0  # Better console output
+tqdm>=4.66.0  # Progress bars
+humanize>=4.8.0  # Human-readable output
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.11.0
+
+# Logging and Monitoring
+loguru>=0.7.0
+sentry-sdk>=1.35.0
+
+# Development Tools
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+pre-commit>=3.4.0
+
+# Optional: GPU Acceleration
+# torch>=2.0.0  # For neural network models
+# tensorflow>=2.13.0  # Alternative to PyTorch
+# onnxruntime-gpu>=1.16.0  # For optimized inference
+
+# Remotion Integration (Node.js required separately)
+# Install via: npm install @remotion/cli @remotion/player
+
+# Filmora API Client (custom package)
+# Note: This would be a custom implementation for Filmora integration
