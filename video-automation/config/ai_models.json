@@ -1,0 +1,266 @@
+{
+  "text_to_video": {
+    "veo3": {
+      "workflow_id": "46",
+      "point_code": "combo_text2video_veo3",
+      "alg_code": "google_text2video",
+      "model": "veo-3.0-fast-generate-preview",
+      "provider": "google",
+      "duration": 8,
+      "resolution": "720p",
+      "aspect_ratio": "16:9",
+      "cost_per_clip": 0.08,
+      "features": ["auto_audio", "sound_effects", "high_quality"],
+      "params": {
+        "prompt": {
+          "type": "string",
+          "min_length": 1,
+          "max_length": 1500,
+          "required": true
+        },
+        "duration": {
+          "type": "integer",
+          "default": 8,
+          "fixed": true
+        },
+        "resolution": {
+          "type": "string",
+          "enum": ["720p", "1080p"],
+          "default": "720p"
+        },
+        "aspect_ratio": {
+          "type": "string",
+          "enum": ["16:9", "9:16"],
+          "default": "16:9"
+        }
+      }
+    },
+    "kelin": {
+      "workflow_id": "1804422399892127744",
+      "point_code": "klm_text2video",
+      "alg_code": "klm_text2video",
+      "model": "video_model",
+      "provider": "kelin",
+      "duration": 5,
+      "resolution": "720p",
+      "aspect_ratio": "4:3",
+      "cost_per_clip": 0.02,
+      "features": ["fast", "cost_effective", "negative_prompts"],
+      "params": {
+        "prompt": {
+          "type": "string",
+          "required": true
+        },
+        "negative_prompt": {
+          "type": "string",
+          "default": ""
+        },
+        "cfg_scale": {
+          "type": "integer",
+          "default": 0,
+          "min": 0,
+          "max": 20
+        },
+        "aspect_ratio": {
+          "type": "string",
+          "enum": ["4:3", "16:9", "1:1"],
+          "default": "4:3"
+        },
+        "duration_string": {
+          "type": "string",
+          "default": "5s"
+        },
+        "mode": {
+          "type": "string",
+          "default": "std"
+        }
+      }
+    }
+  },
+  "image_to_video": {
+    "veo31": {
+      "workflow_id": "45",
+      "point_code": "combo_img2video_veo3",
+      "alg_code": "google_img2video",
+      "model": "veo-3.1-fast-generate-preview",
+      "provider": "google",
+      "duration": 8,
+      "resolution": "720p",
+      "aspect_ratio": "16:9",
+      "cost_per_clip": 0.10,
+      "features": ["auto_audio", "sound_effects", "high_quality"],
+      "params": {
+        "prompt": {
+          "type": "string",
+          "min_length": 1,
+          "max_length": 1500,
+          "required": true
+        },
+        "init_image": {
+          "type": "image",
+          "required": true,
+          "constraints": {
+            "width": {"min": 100, "max": 4000},
+            "height": {"min": 100, "max": 4000},
+            "aspect_ratio": {"min": 0.4, "max": 2.5},
+            "file_size": {"min": 0, "max": 20485760},
+            "file_type": ["jpg", "jpeg", "png"]
+          }
+        },
+        "duration": {
+          "type": "integer",
+          "default": 8,
+          "fixed": true
+        },
+        "resolution": {
+          "type": "string",
+          "enum": ["720p", "1080p"],
+          "default": "720p"
+        },
+        "aspect_ratio": {
+          "type": "string",
+          "enum": ["16:9", "9:16"],
+          "default": "16:9"
+        }
+      }
+    },
+    "sora2": {
+      "workflow_id": "51",
+      "point_code": "azure_2v_sora_8s",
+      "alg_code": "mountsea_2v_sora",
+      "model": "sora-2",
+      "provider": "openai",
+      "duration": 8,
+      "resolution": "720p",
+      "cost_per_clip": 0.15,
+      "features": ["high_quality", "smooth_motion"],
+      "params": {
+        "init_image": {
+          "type": "image",
+          "required": true,
+          "constraints": {
+            "width": {"min": 300, "max": 4000},
+            "height": {"min": 300, "max": 4000},
+            "aspect_ratio": {"min": 0.5, "max": 2.0},
+            "file_size": {"min": 0, "max": 20485760},
+            "file_type": ["jpg", "jpeg", "png"]
+          }
+        },
+        "prompt": {
+          "type": "string",
+          "required": true
+        },
+        "duration": {
+          "type": "integer",
+          "default": 8,
+          "fixed": true
+        },
+        "model": {
+          "type": "string",
+          "default": "sora-2",
+          "fixed": true
+        }
+      }
+    },
+    "standard_2": {
+      "workflow_id": "reference_to_video_standard2",
+      "point_code": "reference_to_video_standard2",
+      "alg_code": "reference_to_video",
+      "model": "standard-2.0",
+      "provider": "proprietary",
+      "duration": 5,
+      "cost_per_clip": 0.05,
+      "features": ["fast", "reference_based"],
+      "params": {
+        "init_image": {
+          "type": "image",
+          "required": true
+        },
+        "prompt": {
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  },
+  "keyframe_to_video": {
+    "standard": {
+      "workflow_id": "keyframe_interpolation",
+      "point_code": "last_frame_to_video",
+      "alg_code": "keyframe_interpolation",
+      "model": "standard-1.0",
+      "provider": "proprietary",
+      "cost_per_clip": 0.03,
+      "features": ["interpolation", "smooth_transitions"],
+      "params": {
+        "start_frame": {
+          "type": "image",
+          "required": true
+        },
+        "end_frame": {
+          "type": "image",
+          "required": true
+        },
+        "duration": {
+          "type": "integer",
+          "min": 3,
+          "max": 10,
+          "default": 5
+        },
+        "resolution_config": {
+          "type": "string",
+          "default": "K2VCustomResolution"
+        },
+        "duration_config": {
+          "type": "string",
+          "default": "K2VCustomDuration"
+        }
+      }
+    }
+  },
+  "model_selection_rules": {
+    "title_scene": {
+      "preferred_model": "text_to_video.veo3",
+      "reason": "High quality with auto-audio for impactful opening"
+    },
+    "concept_scene_high_importance": {
+      "preferred_model": "text_to_video.veo3",
+      "reason": "Key concepts need quality and auto-audio"
+    },
+    "concept_scene_normal": {
+      "preferred_model": "text_to_video.kelin",
+      "reason": "Cost-effective for standard scenes"
+    },
+    "transition_with_image": {
+      "preferred_model": "image_to_video.sora2",
+      "reason": "Smooth transitions from still images"
+    },
+    "background_fill": {
+      "preferred_model": "text_to_video.kelin",
+      "reason": "Cheap filler content"
+    },
+    "conclusion": {
+      "preferred_model": "text_to_video.veo3",
+      "reason": "Strong ending with quality and audio"
+    }
+  },
+  "cost_optimization": {
+    "budget_tiers": {
+      "economy": {
+        "max_cost_per_video": 2.0,
+        "preferred_models": ["kelin", "standard_2"],
+        "veo3_max_clips": 2
+      },
+      "standard": {
+        "max_cost_per_video": 5.0,
+        "preferred_models": ["veo3", "kelin", "sora2"],
+        "veo3_max_clips": 10
+      },
+      "premium": {
+        "max_cost_per_video": 15.0,
+        "preferred_models": ["veo3", "sora2"],
+        "veo3_max_clips": 999
+      }
+    }
+  }
+}
