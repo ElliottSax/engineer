@@ -6,6 +6,18 @@ A collection of engineering projects and research, focusing on autonomous AI sys
 
 ## Projects
 
+### 🎯 NEW: Wondershare Filmora API Reverse Engineering (Class Project)
+**Status:** ✅ COMPLETE - APIs Found and Working!
+
+Successfully reverse-engineered Wondershare Filmora's AI video generation APIs:
+- **Discovered Real APIs:** `https://ai-api.wondershare.cc` (confirmed working)
+- **Extracted Authentication:** WSID `REDACTED_WSID`, Client Sign `REDACTED_WONDERSHARE_SIGN`
+- **Found AI Models:** Google Veo 3.0/3.1, OpenAI Sora 2, Keling
+- **Key Files:**
+  - `filmora_api_working.py` - Complete API client
+  - `monitor_filmora_api.py` - Session capture tool
+  - `REVERSE_ENGINEERING_SUCCESS.md` - Full findings
+
 ### 1. Enhanced Video Automation System
 **Location:** `/video-automation/`
 
