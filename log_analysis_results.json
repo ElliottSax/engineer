@@ -1,0 +1,51 @@
+{
+  "endpoints": {
+    "https://prod-web.wondershare.cc/api/v1/prodweb/operation/detail": 7,
+    "http://cbs.wondershare.com/go.php": 6,
+    "https://prod-web.wondershare.cc/api/v1/prodweb/badge/new": 4,
+    "https://vpcdn11.wondershare.com/s0/eee724830fb2ce0d07e383c6d09d77ef.zip": 4,
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-aitranslation.mp4": 4,
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-animatedcharts.mp4": 4,
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-audiotovideo.mp4": 4,
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-autoreframe.mp4": 4,
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-imagetovideo.mp4": 4,
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-multicamera-enn.mp4": 4,
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-pentool.mp4": 4,
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-smartscenecut.mp4": 4,
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-smartshortclips.mp4": 4,
+    "https://resource.wondershare.com/024/848/wes_black_list.json": 2,
+    "https://download.wondershare.com/developer/846/fxd/image_to_video_veo3_1.0.3.zip": 2,
+    "https://download.wondershare.com/developer/846/fxd/reference_to_video_1.0.1.zip": 2,
+    "https://download.wondershare.com/developer/846/fxd/start_end_frame_to_video_1.0.1.zip": 2,
+    "https://download.wondershare.com/developer/846/fxd/text_to_video_1.0.1.zip": 2,
+    "https://download.wondershare.com/developer/846/fxd/video_element_editing_1.0.1.zip": 2,
+    "https://prod-res.wondershare.cc/client-area-res/173/20251126/205125433/dark-rs-1.mp4": 2,
+    "https://wae.wondershare.cc/wcc/filmora/V11_StartTips.zip": 1,
+    "https://www.open.com": 1,
+    "https://cbs.wondershare.com/go.php": 1,
+    "https://images.wondershare.com/wgp/WGP_1764252780529060592.png": 1,
+    "http://resource.wondershare.com/029/055/filmora_whats_new_video_guide.json": 1,
+    "https://filmora.wondershare.com": 1
+  },
+  "ai_api_calls": [
+    "http://resource.wondershare.com/029/055/filmora_whats_new_video_guide.json",
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-autoreframe.mp4",
+    "https://download.wondershare.com/developer/846/fxd/reference_to_video_1.0.1.zip",
+    "https://download.wondershare.com/developer/846/fxd/video_element_editing_1.0.1.zip",
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-multicamera-enn.mp4",
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-animatedcharts.mp4",
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-smartscenecut.mp4",
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-audiotovideo.mp4",
+    "https://download.wondershare.com/developer/846/fxd/start_end_frame_to_video_1.0.1.zip",
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-pentool.mp4",
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-aitranslation.mp4",
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-smartshortclips.mp4",
+    "https://images.wondershare.com/wgp/WGP_1764252780529060592.png",
+    "https://download.wondershare.com/developer/846/fxd/text_to_video_1.0.1.zip",
+    "https://filmora.wondershare.com/videos/filmora-whatsnew-imagetovideo.mp4",
+    "https://download.wondershare.com/developer/846/fxd/image_to_video_veo3_1.0.3.zip"
+  ],
+  "auth_info": [
+    "client_sign: %7B2871f7e8-51b4-487a-9ab9-5d99926ee2ebG%7D"
+  ]
+}

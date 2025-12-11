@@ -1,0 +1,104 @@
+[
+  {
+    "timestamp": "2025-12-08T21:57:49.520317",
+    "url": "https://images.wondershare.com/wgp/WGP_1764252780529060592.png,",
+    "body": null,
+    "full_line": "[Info][4196][2025-12-08 13:48:46.458T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1764252780529060592.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T15:28:06.544904",
+    "url": "https://images.wondershare.com/wgp/WGP_1764252780529060592.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 15:28:04.265T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1764252780529060592.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:51.329847",
+    "url": "https://filmora.wondershare.net/video-editor/?f=pro",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:50.753T-0600][] C165 cbs request finished: 1, url: https://filmora.wondershare.net/video-editor/?f=pro - [FUserOperationActivity.cpp(208)][FUserFission::{ctor}::<lambda_49004d533f43d0bc1961623e86e0a653>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:51.335624",
+    "url": "https://images.wondershare.com/wgp/WGP_1747621582578295691.png\",\"icon_small\":\"https://images.wondershare.com/wgp/WGP_1747621715157920116.png\",\"icon_middle\":\"https://images.wondershare.com/wgp/WGP_1747621582578295691.png\",\"icon_large\":\"https://images.wondershare.com/wgp/WGP_1747621130701221418.png\",\"pub_status\":2,\"release_at\":\"\",\"reward_total\":1,\"reward_num\":0,\"is_own\":true,\"rule_items\":[{\"id\":7039,\"name\":\"Export",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:51.159T-0600][] request finished, str: {\"code\":0,\"msg\":\"\",\"data\":{\"has_more\":false,\"list\":[{\"badge_id\":2789,\"badge_name\":\"Export Champion\",\"category\":15,\"icon\":\"https://images.wondershare.com/wgp/WGP_1747621582578295691.png\",\"icon_small\":\"https://images.wondershare.com/wgp/WGP_1747621715157920116.png\",\"icon_middle\":\"https://images.wondershare.com/wgp/WGP_1747621582578295691.png\",\"icon_large\":\"https://images.wondershare.com/wgp/WGP_1747621130701221418.png\",\"pub_status\":2,\"release_at\":\"\",\"reward_total\":1,\"reward_num\":0,\"is_own\":true,\"rule_items\":[{\"id\":7039,\"name\":\"Export 50 watermark-free videos using Filmora.\",\"description\":\"Note: Compound clips and selected clips are not counted.\"}],\"reward_items\":[{\"id\":2039,\"group_id\":2039,\"name\":\"300 Points\",\"description\":\"\",\"type\":4,\"status\":0}],\"is_old\":false},{\"badge_id\":2779,\"badge_name\":\"AI Commander\",\"category\":5,\"icon\":\"https://images.wondershare.com/wgp/WGP_1747398243023199483.png\",\"icon_small\":\"https://images.wondershare.com/wgp/WGP_1747398372449993160.png\",\"icon_middle\":\"https://images.wondershare.com/wgp/WGP_1747398243023199483.png\",\"icon_large\":\"https://images.wondershare.com/wgp/WGP_1747392801475821859.png\",\"pub_status\":2,\"release_at\":\"\",\"reward_total\":1,\"reward_num\":0,\"is_own\":true,\"rule_items\":[{\"id\":7149,\"name\":\"Use AI features and consume 1000 AI Credits(starting from the launch date)\",\"description\":\"\"}],\"reward_items\":[{\"id\":2049,\"group_id\":2049,\"name\":\"500 Points\",\"description\":\"\",\"type\":4,\"status\":0}],\"is_old\":false},{\"badge_id\":2899,\"badge_name\":\"Visionary Voice\",\"category\":25,\"icon\":\"https://images.wondershare.com/wgp/WGP_1760950650584291460.png\",\"icon_small\":\"https://images.wondershare.com/wgp/WGP_1760950725531515676.png\",\"icon_middle\":\"https://images.wondershare.com/wgp/WGP_1760950650584291460.png\",\"icon_large\":\"https://images.wondershare.com/wgp/WGP_1760948271495538815.png\",\"pub_status\":2,\"release_at\":\"\",\"reward_total\":1,\"reward_num\":0,\"is_own\":false,\"rule_items\":[{\"id\":7369,\"name\":\"Limited Badge: Join \\\"Your Voice Our Direction\\\" campaign. Please refer to the campaign page for detailed rules.\",\"description\":\"\\u003ca href=\\\"https://filmora.wondershare.com/activity/from-your-voice-our-direction-en.html\\\" target=\\\"_blank\\\"\\u003eClick here to join the campaign directly.\\u003c/a\\u003e\"}],\"reward_items\":[{\"id\":2119,\"group_id\":2119,\"name\":\"1000 Points\",\"description\":\"\",\"type\":4,\"status\":0}],\"is_old\":false},{\"badge_id\":2889,\"badge_name\":\"Gold Patron\",\"category\":25,\"icon\":\"https://images.wondershare.com/wgp/WGP_1755691794419805252.png\",\"icon_small\":\"https://images.wondershare.com/wgp/WGP_1755691825218606800.png\",\"icon_middle\":\"https://images.wondershare.com/wgp/WGP_1755691794419805252.png\",\"icon_large\":\"https://images.wondershare.com/wgp/WGP_1755691684698273600.png\",\"pub_status\":2,\"release_at\":\"\",\"reward_total\":1,\"reward_num\":0,\"is_own\":false,\"rule_items\":[{\"id\":7349,\"name\":\"Make 3 purchases totaling $200+ since June 2024 (Filmora products or Creative Assets only; AI credits not included).\",\"description\":\"The badge unlocks 8 days after your last qualifying purchase \u2014 refunds will void progress. \"}],\"reward_items\":[{\"id\":2109,\"group_id\":2109,\"name\":\"400 Points\",\"description\":\"\",\"type\":4,\"status\":0}],\"is_old\":false},{\"badge_id\":2869,\"badge_name\":\"AI Template Pioneer\",\"category\":25,\"icon\":\"https://images.wondershare.com/wgp/WGP_1754450105404618614.png\",\"icon_small\":\"https://images.wondershare.com/wgp/WGP_1754450131919814382.png\",\"icon_middle\":\"https://images.wondershare.com/wgp/WGP_1754450105404618614.png\",\"icon_large\":\"https://images.wondershare.com/wgp/WGP_1754450088212616790.png\",\"pub_status\":2,\"release_at\":\"\",\"reward_total\":1,\"reward_num\":0,\"is_own\":false,\"rule_items\":[{\"id\":7339,\"name\":\"Go to the Creator Hub: preview an AI template, favorite it, like it, and tap 'Use Template' to start editing.\",\"description\":\"AI templates in Creator Hub are available in version 14.8.10 or above. Make sure you've upgraded :)\"}],\"reward_items\":[{\"id\":2089,\"group_id\":2089,\"name\":\"200 Points\",\"description\":\"\",\"type\":4,\"status\":0}],\"is_old\":false},{\"badge_id\":2849,\"badge_name\":\"Assets Explorer\",\"cat... log truncated, over length: 6374, filter cost: 16ms - [FUserMedal.cpp(247)][FUserMedal::requestNewMedal::<lambda_31e5674bce1d197c793b0dba3527ee2c>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:51.337439",
+    "url": "https://images.wondershare.com/wgp/WGP_1747398243023199483.png\",\"is_received\":0,\"is_reward_received\":1,\"achieved_days\":10564466,\"reward_items\":[{\"id\":2049,\"group_id\":2049,\"name\":\"500",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:51.205T-0600][] request finished, str: {\"code\":0,\"msg\":\"\",\"data\":{\"list\":[{\"badge_id\":2779,\"badge_name\":\"AI Commander\",\"badge_desc\":\"\",\"badge_icon\":\"https://images.wondershare.com/wgp/WGP_1747398243023199483.png\",\"is_received\":0,\"is_reward_received\":1,\"achieved_days\":10564466,\"reward_items\":[{\"id\":2049,\"group_id\":2049,\"name\":\"500 Points\",\"description\":\"\",\"type\":4,\"status\":0}],\"is_old\":false,\"reward_total\":1,\"reward_num\":0},{\"badge_id\":2789,\"badge_name\":\"Export Champion\",\"badge_desc\":\"\",\"badge_icon\":\"https://images.wondershare.com/wgp/WGP_1747621582578295691.png\",\"is_received\":0,\"is_reward_received\":1,\"achieved_days\":14288735,\"reward_items\":[{\"id\":2039,\"group_id\":2039,\"name\":\"300 Points\",\"description\":\"\",\"type\":4,\"status\":0}],\"is_old\":false,\"reward_total\":1,\"reward_num\":0}],\"has_new\":true},\"trace_id\":\"33d42886d186e06929b25c9dc062f345\"} - [FUserMedal.cpp(131)][FUserMedal::requestMyMedals::<lambda_455f04d388c8d0e9346f449d63f9a699>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.550728",
+    "url": "https://images.wondershare.com/wgp/WGP_1747621582578295691.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:51.633T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1747621582578295691.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.551182",
+    "url": "https://images.wondershare.com/wgp/WGP_1747398243023199483.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:51.677T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1747398243023199483.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.551297",
+    "url": "https://images.wondershare.com/wgp/WGP_1760950650584291460.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:51.681T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1760950650584291460.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.551409",
+    "url": "https://images.wondershare.com/wgp/WGP_1754450105404618614.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:51.824T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1754450105404618614.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.551862",
+    "url": "https://images.wondershare.com/wgp/WGP_1752489994958526676.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:51.864T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1752489994958526676.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.552277",
+    "url": "https://images.wondershare.com/wgp/WGP_1747398243023199483.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:51.912T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1747398243023199483.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.552674",
+    "url": "https://images.wondershare.com/wgp/WGP_1747621582578295691.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:51.987T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1747621582578295691.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.553088",
+    "url": "https://images.wondershare.com/wgp/WGP_1755691794419805252.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:52.162T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1755691794419805252.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.553229",
+    "url": "https://images.wondershare.com/wgp/WGP_1754450105404618614.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:52.341T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1754450105404618614.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:52.553342",
+    "url": "https://images.wondershare.com/wgp/WGP_1752489994958526676.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:52.752T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1752489994958526676.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:54.160180",
+    "url": "https://images.wondershare.com/wgp/WGP_1755691794419805252.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:52.884T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1755691794419805252.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  },
+  {
+    "timestamp": "2025-12-09T16:26:54.162236",
+    "url": "https://images.wondershare.com/wgp/WGP_1760950650584291460.png,",
+    "body": null,
+    "full_line": "[Info][18352][2025-12-09 16:26:52.885T-0600][] get reply finished, httpcode: 200 url https://images.wondershare.com/wgp/WGP_1760950650584291460.png, body:  - [FSampleRequset.cpp(277)][FSimpleRequestCommand<class FFFuture>::doRequest_future::<lambda_c903886ec5d945171e35faada66d61ab>::operator ()]\r"
+  }
+]
