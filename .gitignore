@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Secrets - NEVER COMMIT THESE
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+*_credentials.json
+*secrets*
+tokens.json
+
+# State files (may contain sensitive data)
+*_state.json
+autonomous_state.json
+evolution_state.json
+free_execution_state.json
+
+# Results and outputs (large/generated)
+*_results/
+*_results.json
+output/
+results/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.lock
+
+# Large files
+*.bin
+*.dat
+
+# Node modules (for remotion)
+node_modules/
+
+# Claude Code
+.claude/
