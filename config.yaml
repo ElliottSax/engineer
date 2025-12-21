@@ -1,0 +1,141 @@
+# Centralized Configuration for Autonomous Worker System
+# All configurable values in one place
+
+# Platform Health Check Configuration
+health_monitoring:
+  check_interval_seconds: 300  # 5 minutes
+  history_max_items: 100  # Maximum items to keep in history
+
+  alert_thresholds:
+    response_time_warning_ms: 3000
+    response_time_critical_ms: 10000
+    error_rate_warning: 0.05  # 5%
+    error_rate_critical: 0.20  # 20%
+    uptime_warning: 0.95  # 95%
+    uptime_critical: 0.80  # 80%
+
+  health_score_weights:
+    api_accessibility: 25
+    authentication: 15
+    resources: 20
+    response_time: 15
+    error_rate: 15
+    uptime: 10
+
+# Autonomous Worker Configuration
+autonomous_worker:
+  num_workers: 4
+  task_timeout_seconds: 600  # 10 minutes
+  task_check_interval_seconds: 60
+
+  task_generation:
+    quality_analysis_interval_minutes: 30
+    code_improvement_interval_minutes: 60
+    research_interval_minutes: 120
+    deep_analysis_interval_hours: 24
+
+  results_retention:
+    max_history_items: 1000
+    max_result_files: 500
+
+# Script Analysis Configuration
+script_analysis:
+  pacing:
+    words_per_second_max: 4.0  # Too fast
+    words_per_second_min: 1.5  # Too slow
+
+  cliche_detection:
+    enabled: true
+    max_cliches_to_report: 20
+
+# Image Analysis Configuration
+image_analysis:
+  file_size:
+    min_size_mb: 0.1  # Below this is potentially low quality
+    max_size_mb: 10.0  # Above this is potentially inefficient
+  max_issues_to_report: 20
+
+# API Rate Limiting
+rate_limiting:
+  default_requests_per_minute: 60
+  default_requests_per_day: 1000
+
+  providers:
+    groq:
+      requests_per_minute: 30
+      requests_per_day: 14400
+    deepseek:
+      requests_per_minute: 60
+      tokens_per_day: 10000000
+    huggingface:
+      requests_per_minute: 30
+      requests_per_day: 1000
+    local_llama:
+      requests_per_minute: 1000  # Only limited by hardware
+
+# Caching Configuration
+caching:
+  enabled: true
+  ttl_hours: 24
+  max_cache_size_mb: 100
+
+# Logging Configuration
+logging:
+  level: INFO
+  format: "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+  file_handler:
+    enabled: true
+    max_size_mb: 10
+    backup_count: 5
+
+# Security Configuration
+security:
+  code_execution:
+    enabled: false  # DISABLE exec/eval by default
+    sandbox_mode: true
+    timeout_seconds: 30
+    max_memory_mb: 512
+    allowed_builtins:
+      - len
+      - range
+      - enumerate
+      - zip
+      - map
+      - filter
+      - sorted
+      - min
+      - max
+      - sum
+      - abs
+      - round
+      - str
+      - int
+      - float
+      - bool
+      - list
+      - dict
+      - set
+      - tuple
+    blocked_modules:
+      - os
+      - sys
+      - subprocess
+      - shutil
+      - socket
+      - urllib
+      - requests
+      - importlib
+
+# File Operations
+file_operations:
+  locking:
+    enabled: true
+    timeout_seconds: 30
+    retry_attempts: 3
+    retry_delay_seconds: 1
+
+  encoding: utf-8
+
+  state_files:
+    backup_enabled: true
+    max_backups: 5
