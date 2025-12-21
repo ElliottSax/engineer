@@ -109,32 +109,56 @@ class RepositoryMapper:
         self.file_tree: Dict[str, Any] = {}
         self.symbols: Dict[str, List[str]] = {}  # file -> [functions, classes]
 
-    def scan(self, extensions: List[str] = None) -> Dict[str, Any]:
-        """Scan repository and build map"""
+    def scan(self, extensions: List[str] = None, max_files: int = 500) -> Dict[str, Any]:
+        """Scan repository and build map
+
+        Args:
+            extensions: File extensions to include
+            max_files: Maximum number of files to scan (prevents timeout on large repos)
+        """
         if extensions is None:
             extensions = ['.py', '.js', '.ts', '.java', '.go', '.rs', '.cpp', '.c']
 
+        self._file_count = 0
+        self._max_files = max_files
+        self._scanned_files: List[Path] = []  # Track files during tree build
         self.file_tree = self._build_tree(self.repo_path, extensions)
-        self._extract_symbols()
+        self._extract_symbols_from_cache(max_files)
 
         return {
             "root": str(self.repo_path),
             "tree": self.file_tree,
             "symbols": self.symbols,
+            "total_files": self._file_count,
+            "total_lines": 0,  # Skip expensive line counting
             "summary": self._generate_summary()
         }
+
+    def _count_lines(self, file_path: Path) -> int:
+        """Count lines in a file"""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return sum(1 for _ in f)
+        except (OSError, UnicodeDecodeError):
+            return 0
 
     def _build_tree(self, path: Path, extensions: List[str], depth: int = 0) -> Dict:
         """Build file tree recursively"""
         if depth > 10:  # Prevent infinite recursion
             return {}
 
+        if self._file_count >= self._max_files:
+            return {}
+
         tree = {}
 
         try:
             for item in sorted(path.iterdir()):
+                if self._file_count >= self._max_files:
+                    break
+
                 # Skip hidden files and common non-code directories
-                if item.name.startswith('.') or item.name in ['node_modules', '__pycache__', 'venv', '.git']:
+                if item.name.startswith('.') or item.name in ['node_modules', '__pycache__', 'venv', '.git', '.venv', 'dist', 'build']:
                     continue
 
                 if item.is_dir():
@@ -142,18 +166,19 @@ class RepositoryMapper:
                     if subtree:  # Only include non-empty directories
                         tree[item.name] = subtree
                 elif item.suffix in extensions:
-                    tree[item.name] = {
-                        "size": item.stat().st_size,
-                        "modified": item.stat().st_mtime
-                    }
+                    # Skip stat calls for performance (WSL is slow)
+                    tree[item.name] = {"path": str(item)}
+                    self._file_count += 1
+                    self._scanned_files.append(item)
         except PermissionError:
             pass
 
         return tree
 
-    def _extract_symbols(self):
-        """Extract function and class definitions from Python files"""
-        for file_path in self._get_all_files('.py'):
+    def _extract_symbols_from_cache(self, max_files: int = 100):
+        """Extract function and class definitions from cached Python files"""
+        py_files = [f for f in self._scanned_files if f.suffix == '.py'][:max_files]
+        for file_path in py_files:
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
                     content = f.read()
@@ -190,7 +215,7 @@ class RepositoryMapper:
     def _iter_tree_files(self, tree: Dict) -> Any:
         """Iterate over all files in tree"""
         for key, value in tree.items():
-            if isinstance(value, dict) and 'size' in value:
+            if isinstance(value, dict) and 'path' in value:
                 yield key
             elif isinstance(value, dict):
                 yield from self._iter_tree_files(value)
@@ -815,7 +840,7 @@ class UnifiedCodingAgent:
             self.state = AgentState.PLANNING
             logger.info(f"Solving task: {task}")
 
-            repo_map = self.repo_mapper.scan()
+            repo_map = self.repo_mapper.scan(max_files=100)  # Limit for performance
             context = self.repo_mapper.get_context_for_task(task)
 
             logger.info(f"Repository scanned: {repo_map['summary']}")
