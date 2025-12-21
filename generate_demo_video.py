@@ -89,7 +89,7 @@ async def generate_demo_video():
     try:
         topic_index = int(choice) - 1
         selected_topic = topics[topic_index]
-    except:
+    except (ValueError, IndexError):
         selected_topic = topics[0]
 
     print(f"\n🎯 Generating: {selected_topic}")
