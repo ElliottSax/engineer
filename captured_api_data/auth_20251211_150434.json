@@ -1,0 +1,10 @@
+{
+  "timestamp": "20251211_150434",
+  "auth": {
+    "client_sign": "REDACTED_WONDERSHARE_SIGN",
+    "base_api": "https://prod-web.wondershare.cc/api/v1",
+    "product_id": "1901",
+    "version": "15.0.12.16430"
+  },
+  "status": "partial - need wsid"
+}
