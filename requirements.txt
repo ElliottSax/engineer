@@ -1,0 +1,23 @@
+# Requirements for Autonomous Claude System
+# Core dependencies
+
+# Configuration
+pyyaml>=6.0              # YAML configuration parsing
+
+# Async HTTP
+aiohttp>=3.8.0           # Async HTTP client for health checks
+
+# Structured logging (optional but recommended)
+structlog>=23.0.0        # Structured logging for workers
+
+# HTTP requests
+requests>=2.28.0         # HTTP requests for API calls
+
+# Testing
+pytest>=7.0.0            # Testing framework
+pytest-asyncio>=0.21.0   # Async test support
+
+# Optional: For advanced features
+# watchdog>=2.1.0        # File system monitoring
+# flask>=2.0.0           # Web API for remote task submission
+# gradio>=3.0.0          # Web UI for workers
