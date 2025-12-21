@@ -1,0 +1,5 @@
+gradio==4.44.0
+huggingface-hub==0.24.6
+datasets==2.20.0
+aiohttp==3.9.5
+asyncio==3.4.3
