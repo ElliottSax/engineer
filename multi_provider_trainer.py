@@ -332,6 +332,17 @@ class MultiProviderWorker:
         ("count_words", "counts the number of words in a string"),
         ("remove_duplicates", "removes duplicate elements from a list"),
         ("sum_list", "calculates the sum of all elements in a list"),
+        # New tasks
+        ("flatten_list", "flattens a nested list into a single list"),
+        ("get_average", "calculates the average of numbers in a list"),
+        ("filter_even", "filters and returns only even numbers from a list"),
+        ("filter_odd", "filters and returns only odd numbers from a list"),
+        ("get_unique", "returns unique elements preserving order"),
+        ("calculate_power", "calculates base raised to the power of exponent"),
+        ("calculate_gcd", "calculates the greatest common divisor of two numbers"),
+        ("is_anagram", "checks if two strings are anagrams of each other"),
+        ("binary_search", "performs binary search on a sorted array"),
+        ("capitalize_words", "capitalizes the first letter of each word in a string"),
     ]
 
     TEST_CASES = {
@@ -374,6 +385,47 @@ class MultiProviderWorker:
         "sum_list": [
             {"args": [[1, 2, 3, 4, 5]], "expected": 15},
             {"args": [[]], "expected": 0},
+        ],
+        # New test cases
+        "flatten_list": [
+            {"args": [[[1, 2], [3, [4, 5]]]], "expected": [1, 2, 3, 4, 5]},
+            {"args": [[[1], [2], [3]]], "expected": [1, 2, 3]},
+        ],
+        "get_average": [
+            {"args": [[1, 2, 3, 4, 5]], "expected": 3.0},
+            {"args": [[10, 20]], "expected": 15.0},
+        ],
+        "filter_even": [
+            {"args": [[1, 2, 3, 4, 5, 6]], "expected": [2, 4, 6]},
+            {"args": [[1, 3, 5]], "expected": []},
+        ],
+        "filter_odd": [
+            {"args": [[1, 2, 3, 4, 5, 6]], "expected": [1, 3, 5]},
+            {"args": [[2, 4, 6]], "expected": []},
+        ],
+        "get_unique": [
+            {"args": [[1, 2, 2, 3, 3, 3]], "expected": [1, 2, 3]},
+            {"args": [[1, 1, 1]], "expected": [1]},
+        ],
+        "calculate_power": [
+            {"args": [2, 3], "expected": 8},
+            {"args": [5, 2], "expected": 25},
+        ],
+        "calculate_gcd": [
+            {"args": [12, 8], "expected": 4},
+            {"args": [17, 13], "expected": 1},
+        ],
+        "is_anagram": [
+            {"args": ["listen", "silent"], "expected": True},
+            {"args": ["hello", "world"], "expected": False},
+        ],
+        "binary_search": [
+            {"args": [[1, 2, 3, 4, 5], 3], "expected": 2},
+            {"args": [[1, 2, 3, 4, 5], 6], "expected": -1},
+        ],
+        "capitalize_words": [
+            {"args": ["hello world"], "expected": "Hello World"},
+            {"args": ["python programming"], "expected": "Python Programming"},
         ],
     }
 

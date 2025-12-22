@@ -366,8 +366,12 @@ class LocalArchitect(Architect):
         task_lower = task.lower()
 
         # Determine what kind of task this is and create appropriate steps
+        # Use word boundary check to avoid substring matches (e.g., "greatest" contains "test")
+        import re
+        is_test_task = bool(re.search(r'\btest\b', task_lower))
+
         if any(word in task_lower for word in ['add', 'create', 'implement', 'build']):
-            if 'test' in task_lower:
+            if is_test_task:
                 steps.append(PlanStep(
                     step_id=step_id,
                     action="create_file",
@@ -505,8 +509,25 @@ class LocalEditor(Editor):
             func_match = re.search(r"(?:function|def)\s+(\w+)", desc_lower)
         func_name = func_match.group(1) if func_match else "solve"
 
-        # Detect common patterns
-        if 'duplicates' in desc_lower or 'duplicate' in desc_lower:
+        # Detect common patterns - SPECIFIC checks before GENERIC checks
+
+        # Check remove+duplicate BEFORE generic duplicate check
+        if 'remove' in desc_lower and 'duplicate' in desc_lower:
+            lines.extend([
+                f'def {func_name}(items):',
+                '    """Remove duplicates preserving order."""',
+                '    if not items:',
+                '        return []',
+                '    seen = set()',
+                '    result = []',
+                '    for item in items:',
+                '        if item not in seen:',
+                '            seen.add(item)',
+                '            result.append(item)',
+                '    return result',
+                '',
+            ])
+        elif 'duplicates' in desc_lower or 'duplicate' in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Find and return duplicate items."""',
@@ -569,6 +590,23 @@ class LocalEditor(Editor):
                 '    return True',
                 '',
             ])
+        # Binary search check BEFORE generic sort check (to avoid "sorted array" matching "sort")
+        elif 'binary' in desc_lower and 'search' in desc_lower:
+            lines.extend([
+                f'def {func_name}(arr, target):',
+                '    """Binary search for target in sorted array."""',
+                '    left, right = 0, len(arr) - 1',
+                '    while left <= right:',
+                '        mid = (left + right) // 2',
+                '        if arr[mid] == target:',
+                '            return mid',
+                '        elif arr[mid] < target:',
+                '            left = mid + 1',
+                '        else:',
+                '            right = mid - 1',
+                '    return -1',
+                '',
+            ])
         elif 'sort' in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
@@ -612,6 +650,16 @@ class LocalEditor(Editor):
                 '    return min(items)',
                 '',
             ])
+        # Check count+word BEFORE generic count check
+        elif 'count' in desc_lower and 'word' in desc_lower:
+            lines.extend([
+                f'def {func_name}(text):',
+                '    """Count words in text."""',
+                '    if not text or not text.strip():',
+                '        return 0',
+                '    return len(text.split())',
+                '',
+            ])
         elif 'count' in desc_lower:
             lines.extend([
                 f'def {func_name}(items, target=None):',
@@ -631,30 +679,6 @@ class LocalEditor(Editor):
                 '    return -1',
                 '',
             ])
-        elif 'count' in desc_lower and 'word' in desc_lower:
-            lines.extend([
-                f'def {func_name}(text):',
-                '    """Count words in text."""',
-                '    if not text or not text.strip():',
-                '        return 0',
-                '    return len(text.split())',
-                '',
-            ])
-        elif 'remove' in desc_lower and 'duplicate' in desc_lower:
-            lines.extend([
-                f'def {func_name}(items):',
-                '    """Remove duplicates preserving order."""',
-                '    if not items:',
-                '        return []',
-                '    seen = set()',
-                '    result = []',
-                '    for item in items:',
-                '        if item not in seen:',
-                '            seen.add(item)',
-                '            result.append(item)',
-                '    return result',
-                '',
-            ])
         elif 'average' in desc_lower or 'mean' in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
@@ -662,6 +686,99 @@ class LocalEditor(Editor):
                 '    if not items:',
                 '        return 0.0',
                 '    return sum(items) / len(items)',
+                '',
+            ])
+        elif 'flatten' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nested_list):',
+                '    """Flatten a nested list."""',
+                '    result = []',
+                '    for item in nested_list:',
+                '        if isinstance(item, list):',
+                f'            result.extend({func_name}(item))',
+                '        else:',
+                '            result.append(item)',
+                '    return result',
+                '',
+            ])
+        elif 'merge' in desc_lower and 'dict' in desc_lower:
+            lines.extend([
+                f'def {func_name}(*dicts):',
+                '    """Merge multiple dictionaries."""',
+                '    result = {}',
+                '    for d in dicts:',
+                '        if d:',
+                '            result.update(d)',
+                '    return result',
+                '',
+            ])
+        elif 'capitalize' in desc_lower and 'word' in desc_lower:
+            lines.extend([
+                f'def {func_name}(text):',
+                '    """Capitalize first letter of each word."""',
+                '    if not text:',
+                '        return ""',
+                '    return " ".join(word.capitalize() for word in text.split())',
+                '',
+            ])
+        elif 'even' in desc_lower and 'odd' not in desc_lower:
+            lines.extend([
+                f'def {func_name}(items):',
+                '    """Filter even numbers from a list."""',
+                '    return [x for x in items if x % 2 == 0]',
+                '',
+            ])
+        elif 'odd' in desc_lower:
+            lines.extend([
+                f'def {func_name}(items):',
+                '    """Filter odd numbers from a list."""',
+                '    return [x for x in items if x % 2 != 0]',
+                '',
+            ])
+        elif 'unique' in desc_lower:
+            lines.extend([
+                f'def {func_name}(items):',
+                '    """Get unique items preserving order."""',
+                '    seen = set()',
+                '    return [x for x in items if not (x in seen or seen.add(x))]',
+                '',
+            ])
+        elif 'power' in desc_lower or 'exponent' in desc_lower:
+            lines.extend([
+                f'def {func_name}(base, exp):',
+                '    """Calculate base raised to exponent."""',
+                '    return base ** exp',
+                '',
+            ])
+        elif 'gcd' in desc_lower or 'greatest common' in desc_lower:
+            lines.extend([
+                f'def {func_name}(a, b):',
+                '    """Calculate greatest common divisor."""',
+                '    while b:',
+                '        a, b = b, a % b',
+                '    return abs(a)',
+                '',
+            ])
+        elif 'lcm' in desc_lower or 'least common' in desc_lower:
+            lines.extend([
+                f'def {func_name}(a, b):',
+                '    """Calculate least common multiple."""',
+                '    from math import gcd',
+                '    return abs(a * b) // gcd(a, b) if a and b else 0',
+                '',
+            ])
+        elif 'anagram' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s1, s2):',
+                '    """Check if two strings are anagrams."""',
+                '    return sorted(s1.lower().replace(" ", "")) == sorted(s2.lower().replace(" ", ""))',
+                '',
+            ])
+        elif 'length' in desc_lower or 'len' in desc_lower:
+            lines.extend([
+                f'def {func_name}(items):',
+                '    """Get length of items."""',
+                '    return len(items) if items else 0',
                 '',
             ])
         else:
@@ -1070,6 +1187,15 @@ class UnifiedCodingAgent:
         repo_path: str = ".",
         sandbox_dir: str = "/tmp/coding_agent_sandbox"
     ):
+        # Ensure directories exist
+        repo_path_obj = Path(repo_path)
+        if not repo_path_obj.exists():
+            repo_path_obj.mkdir(parents=True, exist_ok=True)
+
+        sandbox_path = Path(sandbox_dir)
+        if not sandbox_path.exists():
+            sandbox_path.mkdir(parents=True, exist_ok=True)
+
         # Core components
         self.repo_mapper = RepositoryMapper(repo_path)
         self.executor = SandboxedExecutor(sandbox_dir)
