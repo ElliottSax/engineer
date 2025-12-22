@@ -621,7 +621,7 @@ class LocalEditor(Editor):
                 '    return len(items) if items else 0',
                 '',
             ])
-        elif 'search' in desc_lower or 'find' in desc_lower:
+        elif 'search' in desc_lower or ('find' in desc_lower and 'duplicate' not in desc_lower):
             lines.extend([
                 f'def {func_name}(items, target):',
                 '    """Search for target in items."""',
@@ -629,6 +629,39 @@ class LocalEditor(Editor):
                 '        if item == target:',
                 '            return i',
                 '    return -1',
+                '',
+            ])
+        elif 'count' in desc_lower and 'word' in desc_lower:
+            lines.extend([
+                f'def {func_name}(text):',
+                '    """Count words in text."""',
+                '    if not text or not text.strip():',
+                '        return 0',
+                '    return len(text.split())',
+                '',
+            ])
+        elif 'remove' in desc_lower and 'duplicate' in desc_lower:
+            lines.extend([
+                f'def {func_name}(items):',
+                '    """Remove duplicates preserving order."""',
+                '    if not items:',
+                '        return []',
+                '    seen = set()',
+                '    result = []',
+                '    for item in items:',
+                '        if item not in seen:',
+                '            seen.add(item)',
+                '            result.append(item)',
+                '    return result',
+                '',
+            ])
+        elif 'average' in desc_lower or 'mean' in desc_lower:
+            lines.extend([
+                f'def {func_name}(items):',
+                '    """Calculate average of items."""',
+                '    if not items:',
+                '        return 0.0',
+                '    return sum(items) / len(items)',
                 '',
             ])
         else:
