@@ -1,0 +1,41 @@
+[Unit]
+Description=AutoCoder 24/7 Continuous Improvement Orchestrator
+Documentation=https://github.com/your-repo/autocoder
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/autocoder
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/usr/bin/python3 /home/ubuntu/autocoder/oracle_24x7_orchestrator.py --workers 3
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/bin/kill -TERM $MAINPID
+
+# Restart configuration
+Restart=always
+RestartSec=30
+StartLimitInterval=600
+StartLimitBurst=5
+
+# Resource limits
+MemoryMax=8G
+CPUQuota=80%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=autocoder
+
+# Security
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/autocoder
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
