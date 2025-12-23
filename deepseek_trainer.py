@@ -23,15 +23,29 @@ from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field, asdict
 import requests
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('deepseek_training.log'),
-        logging.StreamHandler()
-    ]
-)
+from logging.handlers import RotatingFileHandler
+
+# Setup logging with rotation
+log_format = '%(asctime)s - %(levelname)s - %(message)s'
+logging.basicConfig(level=logging.INFO, format=log_format)
 logger = logging.getLogger(__name__)
+
+# Add rotating file handler
+_file_handler = RotatingFileHandler(
+    'deepseek_training.log',
+    maxBytes=10*1024*1024,  # 10 MB
+    backupCount=5,
+    encoding='utf-8'
+)
+_file_handler.setFormatter(logging.Formatter(log_format))
+logger.addHandler(_file_handler)
+
+# Import base classes for reduced duplication
+try:
+    from base_trainer import BaseTrainer, BaseEvaluator, TrainingStats
+    BASE_TRAINER_AVAILABLE = True
+except ImportError:
+    BASE_TRAINER_AVAILABLE = False
 
 
 # =============================================================================
@@ -297,27 +311,38 @@ Provide brief feedback as JSON:
 # TRAINING WORKER
 # =============================================================================
 
-class TrainingWorker:
-    """Continuous training worker"""
+# Use BaseTrainer if available for reduced duplication
+_TrainingWorkerBase = BaseTrainer if BASE_TRAINER_AVAILABLE else object
+
+
+class TrainingWorker(_TrainingWorkerBase):
+    """Continuous training worker using DeepSeek API"""
 
     def __init__(self, worker_id: int = 0):
-        self.worker_id = worker_id
+        # Initialize base class if available
+        if BASE_TRAINER_AVAILABLE:
+            super().__init__(worker_id=worker_id, output_dir="training_output")
+        else:
+            self.worker_id = worker_id
+            self.output_dir = Path("training_output")
+            self.output_dir.mkdir(exist_ok=True)
+            self.running = False
+
+        # DeepSeek-specific components
         self.deepseek = DeepSeekClient()
         self.task_gen = TaskGenerator(self.deepseek)
         self.evaluator = DeepSeekEvaluator(self.deepseek)
 
-        self.iterations = 0
-        self.successes = 0
-        self.failures = 0
+        # Legacy attributes (for backwards compatibility)
+        if not BASE_TRAINER_AVAILABLE:
+            self.iterations = 0
+            self.successes = 0
+            self.failures = 0
+
         self.improvements_made = []
 
-        self.output_dir = Path("training_output")
-        self.output_dir.mkdir(exist_ok=True)
-
-        self.running = False
-
-    async def get_autocoder(self):
-        """Get autocoder instance"""
+    async def get_agent(self):
+        """Get autocoder/agent instance (implements BaseTrainer.get_agent)"""
         import sys
         sys.path.insert(0, str(Path(__file__).parent))
 
@@ -332,11 +357,23 @@ class TrainingWorker:
         agent.auto_test = False
         return agent
 
+    # Alias for backwards compatibility
+    async def get_autocoder(self):
+        """Alias for get_agent (backwards compatibility)"""
+        return await self.get_agent()
+
     async def run_iteration(self) -> Dict:
         """Run a single training iteration"""
 
-        self.iterations += 1
-        logger.info(f"[Worker {self.worker_id}] Iteration {self.iterations}")
+        # Update iteration count (compatible with both BaseTrainer and legacy)
+        if BASE_TRAINER_AVAILABLE and hasattr(self, 'stats'):
+            self.stats.iterations += 1
+            iteration_num = self.stats.iterations
+        else:
+            self.iterations += 1
+            iteration_num = self.iterations
+
+        logger.info(f"[Worker {self.worker_id}] Iteration {iteration_num}")
 
         # Generate task
         task_info = self.task_gen.generate_simple_task()
@@ -345,9 +382,9 @@ class TrainingWorker:
 
         logger.info(f"  Task: {func_name}")
 
-        # Run autocoder
+        # Run agent/autocoder
         try:
-            agent = await self.get_autocoder()
+            agent = await self.get_agent()
             result = await agent.solve_task(task)
 
             if not result.edits:
@@ -372,10 +409,18 @@ class TrainingWorker:
         evaluation = await self.evaluator.evaluate(task, code, test_results)
 
         if evaluation['score'] >= 0.7:
-            self.successes += 1
+            if BASE_TRAINER_AVAILABLE and hasattr(self, 'stats'):
+                self.stats.successes += 1
+                self.stats.scores.append(evaluation['score'])
+            else:
+                self.successes += 1
             logger.info(f"  ✅ Score: {evaluation['score']:.0%}")
         else:
-            self.failures += 1
+            if BASE_TRAINER_AVAILABLE and hasattr(self, 'stats'):
+                self.stats.failures += 1
+                self.stats.scores.append(evaluation['score'])
+            else:
+                self.failures += 1
             logger.info(f"  ❌ Score: {evaluation['score']:.0%}")
 
         return {

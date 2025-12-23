@@ -8,9 +8,11 @@ Runs automated checks, logs events, sends alerts, and maintains statistics
 import asyncio
 import json
 import logging
+import os
 import signal
 import sys
 from datetime import datetime, timedelta
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
@@ -33,12 +35,23 @@ try:
 except ImportError:
     UTILS_AVAILABLE = False
 
-# Configure logging
+# Configurable base directory (defaults to script location)
+BASE_DIR = Path(os.environ.get('HEALTH_MONITOR_BASE_DIR', Path(__file__).parent))
+
+# Configure logging with rotation
+_log_file = BASE_DIR / 'health_monitoring.log'
+_log_file.parent.mkdir(parents=True, exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
     handlers=[
-        logging.FileHandler('/mnt/e/projects/code/health_monitoring.log'),
+        RotatingFileHandler(
+            _log_file,
+            maxBytes=10*1024*1024,  # 10 MB
+            backupCount=5,
+            encoding='utf-8'
+        ),
         logging.StreamHandler()
     ]
 )
@@ -48,7 +61,9 @@ logger = logging.getLogger(__name__)
 class HealthMonitoringDaemon:
     """Background daemon for continuous health monitoring"""
 
-    def __init__(self, config_path: str = '/mnt/e/projects/code/health_config.yaml'):
+    def __init__(self, config_path: Optional[str] = None):
+        if config_path is None:
+            config_path = str(BASE_DIR / 'health_config.yaml')
         self.config = self._load_config(config_path)
         self.health_checker = PlatformHealthChecker()
         self.orchestrator = SelfHealingOrchestrator()
@@ -406,7 +421,7 @@ class HealthMonitoringDaemon:
     def _update_dashboard(self):
         """Update health dashboard"""
 
-        dashboard_path = Path('/mnt/e/projects/code/platform_health_dashboard.txt')
+        dashboard_path = BASE_DIR / 'platform_health_dashboard.txt'
 
         # Get platform rankings
         rankings = self.orchestrator.reliability_rankings
@@ -504,7 +519,7 @@ Last Updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
     def _save_statistics(self) -> None:
         """Save statistics to file"""
 
-        stats_path = Path('/mnt/e/projects/code/health_monitoring_stats.json')
+        stats_path = BASE_DIR / 'health_monitoring_stats.json'
 
         stats_output = {
             **self.stats,
