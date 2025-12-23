@@ -28,9 +28,23 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any, Callable, Union
 from enum import Enum
 
-# Configure logging
+# Configure logging with rotation
+from logging.handlers import RotatingFileHandler
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+# Add file handler with rotation
+_log_dir = Path("logs")
+_log_dir.mkdir(exist_ok=True)
+_file_handler = RotatingFileHandler(
+    _log_dir / "unified_coding_agent.log",
+    maxBytes=10*1024*1024,  # 10 MB
+    backupCount=5,
+    encoding='utf-8'
+)
+_file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+logger.addHandler(_file_handler)
 
 
 # ============================================================================
@@ -92,6 +106,209 @@ class AgentResult:
     execution_time: float = 0.0
     tokens_used: int = 0
     cost: float = 0.0
+
+
+@dataclass
+class AgentMetrics:
+    """Metrics tracking for the agent"""
+    tasks_attempted: int = 0
+    tasks_succeeded: int = 0
+    tasks_failed: int = 0
+    total_execution_time: float = 0.0
+    total_files_created: int = 0
+    total_files_modified: int = 0
+    recovery_attempts: int = 0
+    recovery_successes: int = 0
+    patterns_matched: Dict[str, int] = field(default_factory=dict)
+
+    @property
+    def success_rate(self) -> float:
+        return self.tasks_succeeded / max(1, self.tasks_attempted)
+
+    @property
+    def avg_execution_time(self) -> float:
+        return self.total_execution_time / max(1, self.tasks_attempted)
+
+    def to_dict(self) -> Dict:
+        return {
+            "tasks_attempted": self.tasks_attempted,
+            "tasks_succeeded": self.tasks_succeeded,
+            "tasks_failed": self.tasks_failed,
+            "success_rate": f"{self.success_rate:.1%}",
+            "avg_execution_time": f"{self.avg_execution_time:.2f}s",
+            "total_files_created": self.total_files_created,
+            "total_files_modified": self.total_files_modified,
+            "recovery_attempts": self.recovery_attempts,
+            "recovery_success_rate": f"{self.recovery_successes / max(1, self.recovery_attempts):.1%}",
+            "top_patterns": dict(sorted(self.patterns_matched.items(), key=lambda x: -x[1])[:10])
+        }
+
+
+# ============================================================================
+# PATTERN REGISTRY (for extensible code generation)
+# ============================================================================
+
+class PatternRegistry:
+    """
+    Registry for code generation patterns.
+    Allows adding new patterns without modifying core code.
+    """
+
+    _patterns: Dict[str, Callable] = {}
+    _pattern_keywords: Dict[str, List[str]] = {}
+
+    @classmethod
+    def register(cls, name: str, keywords: List[str], priority: int = 0):
+        """
+        Decorator to register a code generation pattern.
+
+        Usage:
+            @PatternRegistry.register("my_pattern", ["keyword1", "keyword2"])
+            def generate_my_pattern(func_name: str, desc: str) -> List[str]:
+                return ["def {func_name}(): pass"]
+        """
+        def decorator(func: Callable):
+            cls._patterns[name] = (func, priority)
+            cls._pattern_keywords[name] = [kw.lower() for kw in keywords]
+            return func
+        return decorator
+
+    @classmethod
+    def match(cls, description: str) -> Optional[str]:
+        """Find the best matching pattern for a description."""
+        desc_lower = description.lower()
+        best_match = None
+        best_score = 0
+
+        for name, keywords in cls._pattern_keywords.items():
+            score = sum(1 for kw in keywords if kw in desc_lower)
+            # Adjust by priority
+            _, priority = cls._patterns.get(name, (None, 0))
+            score += priority * 0.1
+
+            if score > best_score:
+                best_score = score
+                best_match = name
+
+        return best_match if best_score > 0 else None
+
+    @classmethod
+    def generate(cls, pattern_name: str, func_name: str, description: str) -> List[str]:
+        """Generate code using a registered pattern."""
+        if pattern_name in cls._patterns:
+            func, _ = cls._patterns[pattern_name]
+            return func(func_name, description)
+        return []
+
+    @classmethod
+    def list_patterns(cls) -> List[str]:
+        """List all registered patterns."""
+        return list(cls._patterns.keys())
+
+
+# Register some common patterns
+@PatternRegistry.register("matrix_transpose", ["transpose", "matrix"], priority=5)
+def _gen_matrix_transpose(func_name: str, desc: str) -> List[str]:
+    return [
+        f'def {func_name}(matrix):',
+        '    """Transpose a matrix."""',
+        '    if not matrix or not matrix[0]:',
+        '        return []',
+        '    return [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]',
+        '',
+    ]
+
+
+@PatternRegistry.register("deep_copy", ["deep", "copy", "clone"], priority=3)
+def _gen_deep_copy(func_name: str, desc: str) -> List[str]:
+    return [
+        f'def {func_name}(obj):',
+        '    """Create a deep copy of an object."""',
+        '    import copy',
+        '    return copy.deepcopy(obj)',
+        '',
+    ]
+
+
+@PatternRegistry.register("memoize", ["memoize", "cache", "memo"], priority=5)
+def _gen_memoize(func_name: str, desc: str) -> List[str]:
+    return [
+        f'def {func_name}(func):',
+        '    """Memoization decorator for caching function results."""',
+        '    cache = {}',
+        '    def wrapper(*args):',
+        '        if args not in cache:',
+        '            cache[args] = func(*args)',
+        '        return cache[args]',
+        '    return wrapper',
+        '',
+    ]
+
+
+@PatternRegistry.register("retry_decorator", ["retry", "attempt", "backoff"], priority=5)
+def _gen_retry(func_name: str, desc: str) -> List[str]:
+    return [
+        f'def {func_name}(max_attempts=3, delay=1):',
+        '    """Retry decorator with exponential backoff."""',
+        '    import time',
+        '    def decorator(func):',
+        '        def wrapper(*args, **kwargs):',
+        '            for attempt in range(max_attempts):',
+        '                try:',
+        '                    return func(*args, **kwargs)',
+        '                except Exception as e:',
+        '                    if attempt == max_attempts - 1:',
+        '                        raise',
+        '                    time.sleep(delay * (2 ** attempt))',
+        '        return wrapper',
+        '    return decorator',
+        '',
+    ]
+
+
+@PatternRegistry.register("rate_limiter", ["rate", "limit", "throttle"], priority=5)
+def _gen_rate_limiter(func_name: str, desc: str) -> List[str]:
+    return [
+        f'def {func_name}(max_calls, period=60):',
+        '    """Rate limiter decorator."""',
+        '    import time',
+        '    calls = []',
+        '    def decorator(func):',
+        '        def wrapper(*args, **kwargs):',
+        '            now = time.time()',
+        '            # Remove old calls',
+        '            while calls and calls[0] < now - period:',
+        '                calls.pop(0)',
+        '            if len(calls) >= max_calls:',
+        '                sleep_time = period - (now - calls[0])',
+        '                if sleep_time > 0:',
+        '                    time.sleep(sleep_time)',
+        '            calls.append(time.time())',
+        '            return func(*args, **kwargs)',
+        '        return wrapper',
+        '    return decorator',
+        '',
+    ]
+
+
+@PatternRegistry.register("singleton", ["singleton"], priority=5)
+def _gen_singleton(func_name: str, desc: str) -> List[str]:
+    return [
+        f'class {func_name.title() if func_name else "Singleton"}:',
+        '    """Singleton pattern implementation."""',
+        '    _instance = None',
+        '    ',
+        '    def __new__(cls, *args, **kwargs):',
+        '        if cls._instance is None:',
+        '            cls._instance = super().__new__(cls)',
+        '        return cls._instance',
+        '    ',
+        '    def __init__(self):',
+        '        if not hasattr(self, "_initialized"):',
+        '            self._initialized = True',
+        '            # Initialize here',
+        '',
+    ]
 
 
 # ============================================================================
@@ -527,7 +744,7 @@ class LocalEditor(Editor):
                 '    return result',
                 '',
             ])
-        elif 'duplicates' in desc_lower or 'duplicate' in desc_lower:
+        elif ('duplicates' in desc_lower or 'duplicate' in desc_lower) and 'union' not in desc_lower and 'intersection' not in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Find and return duplicate items."""',
@@ -576,6 +793,32 @@ class LocalEditor(Editor):
                 '    return fib[:n]',
                 '',
             ])
+        # nth prime BEFORE generic prime
+        elif 'nth' in desc_lower and 'prime' in desc_lower:
+            lines.extend([
+                f'def {func_name}(n):',
+                '    """Return the nth prime number."""',
+                '    def is_prime(num):',
+                '        if num < 2:',
+                '            return False',
+                '        if num == 2:',
+                '            return True',
+                '        if num % 2 == 0:',
+                '            return False',
+                '        for i in range(3, int(num**0.5) + 1, 2):',
+                '            if num % i == 0:',
+                '                return False',
+                '        return True',
+                '    ',
+                '    count = 0',
+                '    num = 1',
+                '    while count < n:',
+                '        num += 1',
+                '        if is_prime(num):',
+                '            count += 1',
+                '    return num',
+                '',
+            ])
         elif 'prime' in desc_lower:
             lines.extend([
                 f'def {func_name}(n):',
@@ -609,6 +852,92 @@ class LocalEditor(Editor):
                 '    return -1',
                 '',
             ])
+        # Specific sort algorithms BEFORE generic sort
+        elif 'quick' in desc_lower and 'sort' in desc_lower:
+            lines.extend([
+                f'def {func_name}(arr):',
+                '    """Sort a list using quicksort algorithm."""',
+                '    if len(arr) <= 1:',
+                '        return arr',
+                '    pivot = arr[len(arr) // 2]',
+                '    left = [x for x in arr if x < pivot]',
+                '    middle = [x for x in arr if x == pivot]',
+                '    right = [x for x in arr if x > pivot]',
+                f'    return {func_name}(left) + middle + {func_name}(right)',
+                '',
+            ])
+        elif 'bubble' in desc_lower and 'sort' in desc_lower:
+            lines.extend([
+                f'def {func_name}(arr):',
+                '    """Sort a list using bubble sort algorithm."""',
+                '    arr = arr.copy()',
+                '    n = len(arr)',
+                '    for i in range(n):',
+                '        for j in range(0, n - i - 1):',
+                '            if arr[j] > arr[j + 1]:',
+                '                arr[j], arr[j + 1] = arr[j + 1], arr[j]',
+                '    return arr',
+                '',
+            ])
+        elif 'insertion' in desc_lower and 'sort' in desc_lower:
+            lines.extend([
+                f'def {func_name}(arr):',
+                '    """Sort a list using insertion sort algorithm."""',
+                '    arr = arr.copy()',
+                '    for i in range(1, len(arr)):',
+                '        key = arr[i]',
+                '        j = i - 1',
+                '        while j >= 0 and arr[j] > key:',
+                '            arr[j + 1] = arr[j]',
+                '            j -= 1',
+                '        arr[j + 1] = key',
+                '    return arr',
+                '',
+            ])
+        elif 'merge' in desc_lower and 'sort' in desc_lower and 'list' not in desc_lower:
+            lines.extend([
+                f'def {func_name}(arr):',
+                '    """Sort a list using merge sort algorithm."""',
+                '    if len(arr) <= 1:',
+                '        return arr',
+                '    mid = len(arr) // 2',
+                f'    left = {func_name}(arr[:mid])',
+                f'    right = {func_name}(arr[mid:])',
+                '    return merge(left, right)',
+                '',
+                'def merge(left, right):',
+                '    result = []',
+                '    i = j = 0',
+                '    while i < len(left) and j < len(right):',
+                '        if left[i] <= right[j]:',
+                '            result.append(left[i])',
+                '            i += 1',
+                '        else:',
+                '            result.append(right[j])',
+                '            j += 1',
+                '    result.extend(left[i:])',
+                '    result.extend(right[j:])',
+                '    return result',
+                '',
+            ])
+        elif 'merge' in desc_lower and 'sorted' in desc_lower and 'list' in desc_lower:
+            lines.extend([
+                f'def {func_name}(list1, list2):',
+                '    """Merge two sorted lists into one sorted list."""',
+                '    result = []',
+                '    i = j = 0',
+                '    while i < len(list1) and j < len(list2):',
+                '        if list1[i] <= list2[j]:',
+                '            result.append(list1[i])',
+                '            i += 1',
+                '        else:',
+                '            result.append(list2[j])',
+                '            j += 1',
+                '    result.extend(list1[i:])',
+                '    result.extend(list2[j:])',
+                '    return result',
+                '',
+            ])
         elif 'sort' in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
@@ -627,7 +956,7 @@ class LocalEditor(Editor):
                 '    return list(reversed(items))',
                 '',
             ])
-        elif 'sum' in desc_lower or 'add' in desc_lower:
+        elif ('sum' in desc_lower or 'add' in desc_lower) and 'digit' not in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Calculate sum of items."""',
@@ -652,7 +981,7 @@ class LocalEditor(Editor):
                 '    return min(items)',
                 '',
             ])
-        # Check count+word BEFORE generic count check
+        # Check count+word and count+vowel BEFORE generic count check
         elif 'count' in desc_lower and 'word' in desc_lower:
             lines.extend([
                 f'def {func_name}(text):',
@@ -660,6 +989,14 @@ class LocalEditor(Editor):
                 '    if not text or not text.strip():',
                 '        return 0',
                 '    return len(text.split())',
+                '',
+            ])
+        elif 'count' in desc_lower and 'vowel' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s):',
+                '    """Count the number of vowels in a string."""',
+                '    vowels = "aeiouAEIOU"',
+                '    return sum(1 for c in s if c in vowels)',
                 '',
             ])
         elif 'count' in desc_lower:
@@ -671,7 +1008,7 @@ class LocalEditor(Editor):
                 '    return len(items) if items else 0',
                 '',
             ])
-        elif 'search' in desc_lower or ('find' in desc_lower and 'duplicate' not in desc_lower):
+        elif 'search' in desc_lower or ('find' in desc_lower and 'duplicate' not in desc_lower and 'longest' not in desc_lower and 'second' not in desc_lower and 'intersection' not in desc_lower and 'union' not in desc_lower):
             lines.extend([
                 f'def {func_name}(items, target):',
                 '    """Search for target in items."""',
@@ -776,11 +1113,155 @@ class LocalEditor(Editor):
                 '    return sorted(s1.lower().replace(" ", "")) == sorted(s2.lower().replace(" ", ""))',
                 '',
             ])
-        elif 'length' in desc_lower or 'len' in desc_lower:
+        elif ('length' in desc_lower or 'len' in desc_lower) and 'run-length' not in desc_lower and 'compress' not in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Get length of items."""',
                 '    return len(items) if items else 0',
+                '',
+            ])
+        # === ADVANCED PATTERNS - Added for harder training ===
+        elif 'merge' in desc_lower and 'sorted' in desc_lower and 'list' in desc_lower:
+            lines.extend([
+                f'def {func_name}(list1, list2):',
+                '    """Merge two sorted lists into one sorted list."""',
+                '    result = []',
+                '    i = j = 0',
+                '    while i < len(list1) and j < len(list2):',
+                '        if list1[i] <= list2[j]:',
+                '            result.append(list1[i])',
+                '            i += 1',
+                '        else:',
+                '            result.append(list2[j])',
+                '            j += 1',
+                '    result.extend(list1[i:])',
+                '    result.extend(list2[j:])',
+                '    return result',
+                '',
+            ])
+        elif 'move' in desc_lower and 'zero' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nums):',
+                '    """Move all zeros to the end of the list."""',
+                '    non_zeros = [x for x in nums if x != 0]',
+                '    zeros = [x for x in nums if x == 0]',
+                '    return non_zeros + zeros',
+                '',
+            ])
+        elif 'longest' in desc_lower and 'word' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s):',
+                '    """Find the longest word in a string."""',
+                '    if not s or not s.strip():',
+                '        return ""',
+                '    words = s.split()',
+                '    return max(words, key=len)',
+                '',
+            ])
+        elif 'second' in desc_lower and 'largest' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nums):',
+                '    """Find the second largest element in a list."""',
+                '    if len(nums) < 2:',
+                '        return None',
+                '    sorted_nums = sorted(set(nums), reverse=True)',
+                '    return sorted_nums[1] if len(sorted_nums) > 1 else sorted_nums[0]',
+                '',
+            ])
+        elif 'remove' in desc_lower and 'vowel' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s):',
+                '    """Remove all vowels from a string."""',
+                '    vowels = "aeiouAEIOU"',
+                '    return "".join(c for c in s if c not in vowels)',
+                '',
+            ])
+        elif 'union' in desc_lower:
+            lines.extend([
+                f'def {func_name}(list1, list2):',
+                '    """Find the union of two lists without duplicates."""',
+                '    seen = set()',
+                '    result = []',
+                '    for item in list1 + list2:',
+                '        if item not in seen:',
+                '            seen.add(item)',
+                '            result.append(item)',
+                '    return result',
+                '',
+            ])
+        elif 'intersection' in desc_lower:
+            lines.extend([
+                f'def {func_name}(list1, list2):',
+                '    """Find the intersection of two lists."""',
+                '    set2 = set(list2)',
+                '    seen = set()',
+                '    result = []',
+                '    for item in list1:',
+                '        if item in set2 and item not in seen:',
+                '            seen.add(item)',
+                '            result.append(item)',
+                '    return result',
+                '',
+            ])
+        elif 'perfect' in desc_lower and 'square' in desc_lower:
+            lines.extend([
+                f'def {func_name}(n):',
+                '    """Check if a number is a perfect square."""',
+                '    if n < 0:',
+                '        return False',
+                '    root = int(n ** 0.5)',
+                '    return root * root == n',
+                '',
+            ])
+        elif 'sum' in desc_lower and 'digit' in desc_lower:
+            lines.extend([
+                f'def {func_name}(n):',
+                '    """Calculate the sum of digits in a number."""',
+                '    return sum(int(d) for d in str(abs(n)))',
+                '',
+            ])
+        elif 'compress' in desc_lower or 'run-length' in desc_lower or 'run length' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s):',
+                '    """Compress a string using run-length encoding."""',
+                '    if not s:',
+                '        return ""',
+                '    result = []',
+                '    count = 1',
+                '    for i in range(1, len(s)):',
+                '        if s[i] == s[i-1]:',
+                '            count += 1',
+                '        else:',
+                '            result.append(s[i-1] + str(count))',
+                '            count = 1',
+                '    result.append(s[-1] + str(count))',
+                '    return "".join(result)',
+                '',
+            ])
+        elif 'rotation' in desc_lower or ('rotate' in desc_lower and 'string' in desc_lower):
+            lines.extend([
+                f'def {func_name}(s1, s2):',
+                '    """Check if one string is a rotation of another."""',
+                '    if len(s1) != len(s2):',
+                '        return False',
+                '    return s2 in s1 + s1',
+                '',
+            ])
+        elif 'chunk' in desc_lower or ('split' in desc_lower and 'size' in desc_lower):
+            lines.extend([
+                f'def {func_name}(lst, n):',
+                '    """Split a list into chunks of size n."""',
+                '    return [lst[i:i+n] for i in range(0, len(lst), n)]',
+                '',
+            ])
+        elif 'rotate' in desc_lower and 'list' in desc_lower:
+            lines.extend([
+                f'def {func_name}(lst, k):',
+                '    """Rotate a list by k positions to the right."""',
+                '    if not lst:',
+                '        return []',
+                '    k = k % len(lst)',
+                '    return lst[-k:] + lst[:-k]',
                 '',
             ])
         else:
@@ -1211,6 +1692,9 @@ class UnifiedCodingAgent:
         self.current_plan: Optional[ExecutionPlan] = None
         self.history: List[AgentResult] = []
 
+        # Metrics tracking
+        self.metrics = AgentMetrics()
+
         # Configuration
         self.auto_commit = True
         self.auto_test = True
@@ -1307,12 +1791,24 @@ class UnifiedCodingAgent:
                 execution_time=execution_time
             )
 
+            # Update metrics
+            self.metrics.tasks_attempted += 1
+            self.metrics.tasks_succeeded += 1
+            self.metrics.total_execution_time += execution_time
+            self.metrics.total_files_created += len(files_created)
+            self.metrics.total_files_modified += len(files_modified)
+
             self.history.append(result)
             return result
 
         except Exception as e:
             self.state = AgentState.ERROR
             logger.error(f"Task failed: {e}")
+
+            # Update metrics
+            self.metrics.tasks_attempted += 1
+            self.metrics.tasks_failed += 1
+            self.metrics.total_execution_time += (datetime.now() - start_time).total_seconds()
 
             return AgentResult(
                 success=False,
@@ -1353,8 +1849,17 @@ class UnifiedCodingAgent:
             "state": self.state.value,
             "current_plan": self.current_plan.task_description if self.current_plan else None,
             "history_count": len(self.history),
-            "llm_usage": self.llm_manager.get_usage_stats()
+            "llm_usage": self.llm_manager.get_usage_stats(),
+            "metrics": self.metrics.to_dict()
         }
+
+    def get_metrics(self) -> Dict[str, Any]:
+        """Get detailed metrics"""
+        return self.metrics.to_dict()
+
+    def reset_metrics(self):
+        """Reset all metrics"""
+        self.metrics = AgentMetrics()
 
 
 # ============================================================================

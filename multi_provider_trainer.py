@@ -26,15 +26,22 @@ from abc import ABC, abstractmethod
 import requests
 from concurrent.futures import ThreadPoolExecutor
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(name)s] %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('multi_provider_training.log'),
-        logging.StreamHandler()
-    ]
-)
+from logging.handlers import RotatingFileHandler
+
+# Setup logging with rotation (10MB max, 5 backups)
+log_format = '%(asctime)s [%(name)s] %(levelname)s - %(message)s'
+logging.basicConfig(level=logging.INFO, format=log_format)
 logger = logging.getLogger(__name__)
+
+# Add rotating file handler
+_file_handler = RotatingFileHandler(
+    'multi_provider_training.log',
+    maxBytes=10*1024*1024,  # 10 MB
+    backupCount=5,
+    encoding='utf-8'
+)
+_file_handler.setFormatter(logging.Formatter(log_format))
+logger.addHandler(_file_handler)
 
 
 # =============================================================================
@@ -235,7 +242,7 @@ class OllamaProvider(LLMProvider):
             try:
                 response = requests.get("http://localhost:11434/api/tags", timeout=2)
                 self._available = response.status_code == 200
-            except:
+            except (requests.RequestException, ConnectionError, TimeoutError):
                 self._available = False
         return self._available
 
@@ -530,8 +537,8 @@ class MultiProviderWorker:
                     actual = func(*test['args'])
                     if actual == test['expected']:
                         passed += 1
-                except:
-                    pass
+                except (TypeError, ValueError, IndexError, KeyError, RuntimeError) as e:
+                    logger.debug(f"Test case failed: {e}")
 
         except Exception as e:
             logger.debug(f"Test execution error: {e}")
