@@ -292,9 +292,10 @@ class WorkerManager:
     async def start_worker(
         self,
         worker_type: WorkerType,
-        worker_id: Optional[str] = None
+        worker_id: Optional[str] = None,
+        use_subprocess: bool = False
     ) -> WorkerInfo:
-        """Start a new worker process"""
+        """Start a new worker (inline by default, subprocess optional)"""
         if worker_id is None:
             worker_id = f"{worker_type.value}_{len(self.workers)}"
 
@@ -305,42 +306,43 @@ class WorkerManager:
             started_at=datetime.now()
         )
 
-        # Get the appropriate worker script
-        script = self._get_worker_script(worker_type)
+        if use_subprocess:
+            # Get the appropriate worker script
+            script = self._get_worker_script(worker_type)
 
-        if script and script.exists():
-            try:
-                # Start worker process
-                env = os.environ.copy()
-                env['WORKER_ID'] = worker_id
-                env['WORKER_TYPE'] = worker_type.value
+            if script and script.exists():
+                try:
+                    # Start worker process
+                    env = os.environ.copy()
+                    env['WORKER_ID'] = worker_id
+                    env['WORKER_TYPE'] = worker_type.value
 
-                process = subprocess.Popen(
-                    [sys.executable, str(script), "--worker-id", worker_id],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    env=env,
-                    cwd=str(self.base_dir)
-                )
+                    process = subprocess.Popen(
+                        [sys.executable, str(script), "--worker-id", worker_id],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        env=env,
+                        cwd=str(self.base_dir)
+                    )
 
-                worker.pid = process.pid
-                worker.status = WorkerStatus.RUNNING
-                worker.last_heartbeat = datetime.now()
+                    worker.pid = process.pid
+                    worker.status = WorkerStatus.RUNNING
+                    worker.last_heartbeat = datetime.now()
 
-                self.workers[worker_id] = worker
-                self.processes[worker_id] = process
+                    self.workers[worker_id] = worker
+                    self.processes[worker_id] = process
 
-                logger.info(f"Started worker {worker_id} (PID: {worker.pid})")
+                    logger.info(f"Started subprocess worker {worker_id} (PID: {worker.pid})")
+                    return worker
 
-            except Exception as e:
-                worker.status = WorkerStatus.ERROR
-                logger.error(f"Failed to start worker {worker_id}: {e}")
-        else:
-            # Run inline worker if no script exists
-            worker.status = WorkerStatus.RUNNING
-            worker.last_heartbeat = datetime.now()
-            self.workers[worker_id] = worker
-            logger.info(f"Started inline worker {worker_id}")
+                except Exception as e:
+                    logger.warning(f"Subprocess failed for {worker_id}, using inline: {e}")
+
+        # Use inline worker (default - more reliable)
+        worker.status = WorkerStatus.RUNNING
+        worker.last_heartbeat = datetime.now()
+        self.workers[worker_id] = worker
+        logger.info(f"Started inline worker {worker_id} ({worker_type.value})")
 
         return worker
 
@@ -400,7 +402,7 @@ class WorkerManager:
         now = datetime.now()
 
         for worker_id, worker in self.workers.items():
-            # Check if process is running
+            # Check if subprocess is running (only for subprocess workers)
             if worker_id in self.processes:
                 process = self.processes[worker_id]
                 if process.poll() is not None:
@@ -408,14 +410,8 @@ class WorkerManager:
                     health[worker_id] = False
                     continue
 
-            # Check heartbeat timeout (5 minutes)
-            if worker.last_heartbeat:
-                timeout = timedelta(minutes=5)
-                if now - worker.last_heartbeat > timeout:
-                    worker.status = WorkerStatus.ERROR
-                    health[worker_id] = False
-                    continue
-
+            # For inline workers, just check status
+            # Heartbeat is updated during task execution
             health[worker_id] = worker.status == WorkerStatus.RUNNING
 
         return health

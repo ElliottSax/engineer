@@ -608,10 +608,19 @@ async def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Multi-Provider Training")
-    parser.add_argument("--workers", type=int, default=1)
-    parser.add_argument("--iterations", type=int, default=20)
-    parser.add_argument("--delay", type=float, default=1.0)
+    parser.add_argument("--workers", type=int, default=1, help="Number of workers")
+    parser.add_argument("--iterations", type=int, default=20, help="Iterations per worker")
+    parser.add_argument("--delay", type=float, default=1.0, help="Delay between iterations")
+    parser.add_argument("--worker-id", type=str, default=None, help="Worker ID (for orchestrator)")
+    parser.add_argument("--continuous", action="store_true", help="Run continuously (no iteration limit)")
     args = parser.parse_args()
+
+    # If running as single worker with ID (from orchestrator)
+    if args.worker_id:
+        worker = MultiProviderWorker(int(args.worker_id.split('_')[-1]) if '_' in args.worker_id else 0)
+        iterations = 1000000 if args.continuous else args.iterations
+        await worker.run_continuous(iterations, args.delay)
+        return
 
     print("=" * 60)
     print("MULTI-PROVIDER CONTINUOUS TRAINING")
