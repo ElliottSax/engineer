@@ -793,6 +793,23 @@ class LocalEditor(Editor):
                 '    return fib[:n]',
                 '',
             ])
+        # prime_factors BEFORE generic prime
+        elif 'prime' in desc_lower and 'factor' in desc_lower:
+            lines.extend([
+                f'def {func_name}(n):',
+                '    """Find prime factorization of a number."""',
+                '    factors = []',
+                '    d = 2',
+                '    while d * d <= n:',
+                '        while n % d == 0:',
+                '            factors.append(d)',
+                '            n //= d',
+                '        d += 1',
+                '    if n > 1:',
+                '        factors.append(n)',
+                '    return factors',
+                '',
+            ])
         # nth prime BEFORE generic prime
         elif 'nth' in desc_lower and 'prime' in desc_lower:
             lines.extend([
@@ -938,7 +955,7 @@ class LocalEditor(Editor):
                 '    return result',
                 '',
             ])
-        elif 'sort' in desc_lower:
+        elif 'sort' in desc_lower and 'median' not in desc_lower and 'topological' not in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Sort items in ascending order."""',
@@ -956,14 +973,28 @@ class LocalEditor(Editor):
                 '    return list(reversed(items))',
                 '',
             ])
-        elif ('sum' in desc_lower or 'add' in desc_lower) and 'digit' not in desc_lower:
+        elif ('sum' in desc_lower or 'add' in desc_lower) and 'digit' not in desc_lower and 'three' not in desc_lower and 'triplet' not in desc_lower and 'subarray' not in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Calculate sum of items."""',
                 '    return sum(items) if items else 0',
                 '',
             ])
-        elif 'max' in desc_lower or 'maximum' in desc_lower:
+        # max_subarray_sum MUST come before generic max
+        elif 'max' in desc_lower and 'subarray' in desc_lower and 'sum' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nums):',
+                '    """Find maximum sum of contiguous subarray (Kadane)."""',
+                '    if not nums:',
+                '        return 0',
+                '    max_sum = current = nums[0]',
+                '    for num in nums[1:]:',
+                '        current = max(num, current + num)',
+                '        max_sum = max(max_sum, current)',
+                '    return max_sum',
+                '',
+            ])
+        elif ('max' in desc_lower or 'maximum' in desc_lower) and 'depth' not in desc_lower and 'tree' not in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Find maximum value."""',
@@ -972,7 +1003,7 @@ class LocalEditor(Editor):
                 '    return max(items)',
                 '',
             ])
-        elif 'min' in desc_lower or 'minimum' in desc_lower:
+        elif ('min' in desc_lower or 'minimum' in desc_lower) and 'distance' not in desc_lower and 'edit' not in desc_lower and 'coin' not in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Find minimum value."""',
@@ -1008,7 +1039,7 @@ class LocalEditor(Editor):
                 '    return len(items) if items else 0',
                 '',
             ])
-        elif 'search' in desc_lower or ('find' in desc_lower and 'duplicate' not in desc_lower and 'longest' not in desc_lower and 'second' not in desc_lower and 'intersection' not in desc_lower and 'union' not in desc_lower):
+        elif 'search' in desc_lower or ('find' in desc_lower and 'duplicate' not in desc_lower and 'longest' not in desc_lower and 'second' not in desc_lower and 'intersection' not in desc_lower and 'union' not in desc_lower and 'shortest' not in desc_lower and 'path' not in desc_lower and 'median' not in desc_lower):
             lines.extend([
                 f'def {func_name}(items, target):',
                 '    """Search for target in items."""',
@@ -1060,7 +1091,7 @@ class LocalEditor(Editor):
                 '    return " ".join(word.capitalize() for word in text.split())',
                 '',
             ])
-        elif 'even' in desc_lower and 'odd' not in desc_lower:
+        elif 'even' in desc_lower and 'odd' not in desc_lower and 'distance' not in desc_lower and 'levenshtein' not in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Filter even numbers from a list."""',
@@ -1082,7 +1113,7 @@ class LocalEditor(Editor):
                 '    return [x for x in items if not (x in seen or seen.add(x))]',
                 '',
             ])
-        elif 'power' in desc_lower or 'exponent' in desc_lower:
+        elif ('power' in desc_lower or 'exponent' in desc_lower) and 'set' not in desc_lower and 'subset' not in desc_lower:
             lines.extend([
                 f'def {func_name}(base, exp):',
                 '    """Calculate base raised to exponent."""',
@@ -1113,7 +1144,7 @@ class LocalEditor(Editor):
                 '    return sorted(s1.lower().replace(" ", "")) == sorted(s2.lower().replace(" ", ""))',
                 '',
             ])
-        elif ('length' in desc_lower or 'len' in desc_lower) and 'run-length' not in desc_lower and 'compress' not in desc_lower:
+        elif ('length' in desc_lower or 'len' in desc_lower) and 'run-length' not in desc_lower and 'compress' not in desc_lower and 'subsequence' not in desc_lower:
             lines.extend([
                 f'def {func_name}(items):',
                 '    """Get length of items."""',
@@ -1146,6 +1177,22 @@ class LocalEditor(Editor):
                 '    non_zeros = [x for x in nums if x != 0]',
                 '    zeros = [x for x in nums if x == 0]',
                 '    return non_zeros + zeros',
+                '',
+            ])
+        # longest_increasing_subsequence BEFORE longest_word
+        elif 'longest' in desc_lower and 'increasing' in desc_lower and 'subsequence' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nums):',
+                '    """Find length of longest increasing subsequence."""',
+                '    if not nums:',
+                '        return 0',
+                '    n = len(nums)',
+                '    dp = [1] * n',
+                '    for i in range(1, n):',
+                '        for j in range(i):',
+                '            if nums[j] < nums[i]:',
+                '                dp[i] = max(dp[i], dp[j] + 1)',
+                '    return max(dp)',
                 '',
             ])
         elif 'longest' in desc_lower and 'word' in desc_lower:
@@ -1262,6 +1309,457 @@ class LocalEditor(Editor):
                 '        return []',
                 '    k = k % len(lst)',
                 '    return lst[-k:] + lst[:-k]',
+                '',
+            ])
+        # === EXPERT PATTERNS - Dynamic Programming ===
+        elif 'longest' in desc_lower and 'common' in desc_lower and 'subsequence' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s1, s2):',
+                '    """Find the longest common subsequence of two strings."""',
+                '    m, n = len(s1), len(s2)',
+                '    dp = [[""] * (n + 1) for _ in range(m + 1)]',
+                '    for i in range(1, m + 1):',
+                '        for j in range(1, n + 1):',
+                '            if s1[i-1] == s2[j-1]:',
+                '                dp[i][j] = dp[i-1][j-1] + s1[i-1]',
+                '            else:',
+                '                dp[i][j] = max(dp[i-1][j], dp[i][j-1], key=len)',
+                '    return dp[m][n]',
+                '',
+            ])
+        elif 'edit' in desc_lower and 'distance' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s1, s2):',
+                '    """Calculate minimum edit distance (Levenshtein distance)."""',
+                '    m, n = len(s1), len(s2)',
+                '    dp = [[0] * (n + 1) for _ in range(m + 1)]',
+                '    for i in range(m + 1):',
+                '        dp[i][0] = i',
+                '    for j in range(n + 1):',
+                '        dp[0][j] = j',
+                '    for i in range(1, m + 1):',
+                '        for j in range(1, n + 1):',
+                '            if s1[i-1] == s2[j-1]:',
+                '                dp[i][j] = dp[i-1][j-1]',
+                '            else:',
+                '                dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])',
+                '    return dp[m][n]',
+                '',
+            ])
+        elif 'knapsack' in desc_lower:
+            lines.extend([
+                f'def {func_name}(weights, values, capacity):',
+                '    """Solve 0/1 knapsack problem."""',
+                '    n = len(weights)',
+                '    dp = [[0] * (capacity + 1) for _ in range(n + 1)]',
+                '    for i in range(1, n + 1):',
+                '        for w in range(capacity + 1):',
+                '            if weights[i-1] <= w:',
+                '                dp[i][w] = max(dp[i-1][w], values[i-1] + dp[i-1][w - weights[i-1]])',
+                '            else:',
+                '                dp[i][w] = dp[i-1][w]',
+                '    return dp[n][capacity]',
+                '',
+            ])
+        elif 'coin' in desc_lower and ('change' in desc_lower or 'amount' in desc_lower or 'minimum' in desc_lower):
+            lines.extend([
+                f'def {func_name}(coins, amount):',
+                '    """Find minimum coins needed for amount."""',
+                '    dp = [float("inf")] * (amount + 1)',
+                '    dp[0] = 0',
+                '    for i in range(1, amount + 1):',
+                '        for coin in coins:',
+                '            if coin <= i and dp[i - coin] + 1 < dp[i]:',
+                '                dp[i] = dp[i - coin] + 1',
+                '    return dp[amount] if dp[amount] != float("inf") else -1',
+                '',
+            ])
+        # === EXPERT PATTERNS - Graph Algorithms (dict-based adjacency) ===
+        elif 'topological' in desc_lower and 'sort' in desc_lower:
+            lines.extend([
+                f'def {func_name}(graph):',
+                '    """Topological sort using Kahn\'s algorithm (dict-based)."""',
+                '    from collections import deque',
+                '    in_degree = {node: 0 for node in graph}',
+                '    for node in graph:',
+                '        for neighbor in graph[node]:',
+                '            in_degree[neighbor] = in_degree.get(neighbor, 0) + 1',
+                '    queue = deque([n for n in graph if in_degree[n] == 0])',
+                '    result = []',
+                '    while queue:',
+                '        node = queue.popleft()',
+                '        result.append(node)',
+                '        for neighbor in graph.get(node, []):',
+                '            in_degree[neighbor] -= 1',
+                '            if in_degree[neighbor] == 0:',
+                '                queue.append(neighbor)',
+                '    return result if len(result) == len(graph) else []',
+                '',
+            ])
+        elif 'detect' in desc_lower and 'cycle' in desc_lower:
+            lines.extend([
+                f'def {func_name}(graph):',
+                '    """Detect cycle in directed graph using DFS (dict-based)."""',
+                '    WHITE, GRAY, BLACK = 0, 1, 2',
+                '    color = {node: WHITE for node in graph}',
+                '    def dfs(node):',
+                '        color[node] = GRAY',
+                '        for neighbor in graph.get(node, []):',
+                '            if color.get(neighbor, WHITE) == GRAY:',
+                '                return True',
+                '            if color.get(neighbor, WHITE) == WHITE and dfs(neighbor):',
+                '                return True',
+                '        color[node] = BLACK',
+                '        return False',
+                '    return any(color[n] == WHITE and dfs(n) for n in graph)',
+                '',
+            ])
+        elif 'shortest' in desc_lower and 'path' in desc_lower:
+            lines.extend([
+                f'def {func_name}(graph, start, end):',
+                '    """Find shortest path using BFS (dict-based adjacency)."""',
+                '    from collections import deque',
+                '    if start == end:',
+                '        return [start]',
+                '    visited = {start}',
+                '    queue = deque([(start, [start])])',
+                '    while queue:',
+                '        node, path = queue.popleft()',
+                '        for neighbor in graph.get(node, []):',
+                '            if neighbor == end:',
+                '                return path + [neighbor]',
+                '            if neighbor not in visited:',
+                '                visited.add(neighbor)',
+                '                queue.append((neighbor, path + [neighbor]))',
+                '    return []',
+                '',
+            ])
+        elif 'connected' in desc_lower and 'component' in desc_lower:
+            lines.extend([
+                f'def {func_name}(graph):',
+                '    """Count connected components in undirected graph (dict-based)."""',
+                '    visited = set()',
+                '    def dfs(node):',
+                '        visited.add(node)',
+                '        for neighbor in graph.get(node, []):',
+                '            if neighbor not in visited:',
+                '                dfs(neighbor)',
+                '    count = 0',
+                '    for node in graph:',
+                '        if node not in visited:',
+                '            dfs(node)',
+                '            count += 1',
+                '    return count',
+                '',
+            ])
+        # === EXPERT PATTERNS - Tree Operations ===
+        elif 'tree' in desc_lower and 'depth' in desc_lower:
+            lines.extend([
+                f'def {func_name}(root):',
+                '    """Calculate depth of binary tree (dict-based)."""',
+                '    if root is None:',
+                '        return 0',
+                '    if isinstance(root, dict):',
+                '        left = root.get("left")',
+                '        right = root.get("right")',
+                f'        return 1 + max({func_name}(left), {func_name}(right))',
+                '    return 1',
+                '',
+            ])
+        elif 'invert' in desc_lower and 'tree' in desc_lower:
+            lines.extend([
+                f'def {func_name}(root):',
+                '    """Invert binary tree (dict-based)."""',
+                '    if root is None:',
+                '        return None',
+                '    if isinstance(root, dict):',
+                '        return {',
+                '            "val": root.get("val"),',
+                f'            "left": {func_name}(root.get("right")),',
+                f'            "right": {func_name}(root.get("left"))',
+                '        }',
+                '    return root',
+                '',
+            ])
+        elif 'balanced' in desc_lower and 'tree' in desc_lower:
+            lines.extend([
+                f'def {func_name}(root):',
+                '    """Check if binary tree is balanced (dict-based)."""',
+                '    def height(node):',
+                '        if node is None:',
+                '            return 0',
+                '        if isinstance(node, dict):',
+                '            left_h = height(node.get("left"))',
+                '            right_h = height(node.get("right"))',
+                '            if left_h == -1 or right_h == -1:',
+                '                return -1',
+                '            if abs(left_h - right_h) > 1:',
+                '                return -1',
+                '            return 1 + max(left_h, right_h)',
+                '        return 1',
+                '    return height(root) != -1',
+                '',
+            ])
+        # === EXPERT PATTERNS - String Algorithms ===
+        elif 'valid' in desc_lower and 'parenthes' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s):',
+                '    """Check if parentheses are valid."""',
+                '    stack = []',
+                '    pairs = {")": "(", "}": "{", "]": "["}',
+                '    for c in s:',
+                '        if c in "({[":',
+                '            stack.append(c)',
+                '        elif c in ")}]":',
+                '            if not stack or stack.pop() != pairs[c]:',
+                '                return False',
+                '    return len(stack) == 0',
+                '',
+            ])
+        elif 'generate' in desc_lower and 'parenthes' in desc_lower:
+            lines.extend([
+                f'def {func_name}(n):',
+                '    """Generate all valid parentheses combinations."""',
+                '    result = []',
+                '    def backtrack(s, open_count, close_count):',
+                '        if len(s) == 2 * n:',
+                '            result.append(s)',
+                '            return',
+                '        if open_count < n:',
+                '            backtrack(s + "(", open_count + 1, close_count)',
+                '        if close_count < open_count:',
+                '            backtrack(s + ")", open_count, close_count + 1)',
+                '    backtrack("", 0, 0)',
+                '    return result',
+                '',
+            ])
+        elif 'word' in desc_lower and 'break' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s, word_dict):',
+                '    """Check if string can be segmented into dictionary words."""',
+                '    word_set = set(word_dict)',
+                '    n = len(s)',
+                '    dp = [False] * (n + 1)',
+                '    dp[0] = True',
+                '    for i in range(1, n + 1):',
+                '        for j in range(i):',
+                '            if dp[j] and s[j:i] in word_set:',
+                '                dp[i] = True',
+                '                break',
+                '    return dp[n]',
+                '',
+            ])
+        elif 'longest' in desc_lower and 'palindrom' in desc_lower and 'substring' in desc_lower:
+            lines.extend([
+                f'def {func_name}(s):',
+                '    """Find longest palindromic substring."""',
+                '    if not s:',
+                '        return ""',
+                '    n = len(s)',
+                '    start, max_len = 0, 1',
+                '    def expand(left, right):',
+                '        while left >= 0 and right < n and s[left] == s[right]:',
+                '            left -= 1',
+                '            right += 1',
+                '        return left + 1, right - left - 1',
+                '    for i in range(n):',
+                '        l1, len1 = expand(i, i)',
+                '        l2, len2 = expand(i, i + 1)',
+                '        if len1 > max_len:',
+                '            start, max_len = l1, len1',
+                '        if len2 > max_len:',
+                '            start, max_len = l2, len2',
+                '    return s[start:start + max_len]',
+                '',
+            ])
+        # === EXPERT PATTERNS - Math ===
+        elif 'prime' in desc_lower and 'factor' in desc_lower:
+            lines.extend([
+                f'def {func_name}(n):',
+                '    """Find prime factorization of a number."""',
+                '    factors = []',
+                '    d = 2',
+                '    while d * d <= n:',
+                '        while n % d == 0:',
+                '            factors.append(d)',
+                '            n //= d',
+                '        d += 1',
+                '    if n > 1:',
+                '        factors.append(n)',
+                '    return factors',
+                '',
+            ])
+        elif 'power' in desc_lower and 'set' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nums):',
+                '    """Generate power set (all subsets)."""',
+                '    result = [[]]',
+                '    for num in nums:',
+                '        new_subsets = []',
+                '        for subset in result:',
+                '            new_subsets.append(subset + [num])',
+                '        result.extend(new_subsets)',
+                '    return sorted(result, key=lambda x: (len(x), x))',
+                '',
+            ])
+        elif 'permutation' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nums):',
+                '    """Generate all permutations."""',
+                '    if len(nums) <= 1:',
+                '        return [nums[:]]',
+                '    result = []',
+                '    for i in range(len(nums)):',
+                '        rest = nums[:i] + nums[i+1:]',
+                f'        for p in {func_name}(rest):',
+                '            result.append([nums[i]] + p)',
+                '    return result',
+                '',
+            ])
+        elif 'combination' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nums, k):',
+                '    """Generate all k-combinations."""',
+                '    result = []',
+                '    def backtrack(start, path):',
+                '        if len(path) == k:',
+                '            result.append(path[:])',
+                '            return',
+                '        for i in range(start, len(nums)):',
+                '            path.append(nums[i])',
+                '            backtrack(i + 1, path)',
+                '            path.pop()',
+                '    backtrack(0, [])',
+                '    return result',
+                '',
+            ])
+        elif 'matrix' in desc_lower and 'multiply' in desc_lower:
+            lines.extend([
+                f'def {func_name}(A, B):',
+                '    """Multiply two matrices."""',
+                '    if not A or not B or len(A[0]) != len(B):',
+                '        return []',
+                '    m, k, n = len(A), len(A[0]), len(B[0])',
+                '    result = [[0] * n for _ in range(m)]',
+                '    for i in range(m):',
+                '        for j in range(n):',
+                '            for x in range(k):',
+                '                result[i][j] += A[i][x] * B[x][j]',
+                '    return result',
+                '',
+            ])
+        elif 'spiral' in desc_lower and 'matrix' in desc_lower:
+            lines.extend([
+                f'def {func_name}(matrix):',
+                '    """Return matrix elements in spiral order."""',
+                '    if not matrix or not matrix[0]:',
+                '        return []',
+                '    result = []',
+                '    top, bottom = 0, len(matrix) - 1',
+                '    left, right = 0, len(matrix[0]) - 1',
+                '    while top <= bottom and left <= right:',
+                '        for i in range(left, right + 1):',
+                '            result.append(matrix[top][i])',
+                '        top += 1',
+                '        for i in range(top, bottom + 1):',
+                '            result.append(matrix[i][right])',
+                '        right -= 1',
+                '        if top <= bottom:',
+                '            for i in range(right, left - 1, -1):',
+                '                result.append(matrix[bottom][i])',
+                '            bottom -= 1',
+                '        if left <= right:',
+                '            for i in range(bottom, top - 1, -1):',
+                '                result.append(matrix[i][left])',
+                '            left += 1',
+                '    return result',
+                '',
+            ])
+        # === EXPERT PATTERNS - Advanced List Operations ===
+        elif 'merge' in desc_lower and 'interval' in desc_lower:
+            lines.extend([
+                f'def {func_name}(intervals):',
+                '    """Merge overlapping intervals."""',
+                '    if not intervals:',
+                '        return []',
+                '    intervals.sort(key=lambda x: x[0])',
+                '    merged = [intervals[0]]',
+                '    for start, end in intervals[1:]:',
+                '        if start <= merged[-1][1]:',
+                '            merged[-1][1] = max(merged[-1][1], end)',
+                '        else:',
+                '            merged.append([start, end])',
+                '    return merged',
+                '',
+            ])
+        elif 'three' in desc_lower and 'sum' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nums, target=0):',
+                '    """Find all unique triplets that sum to target."""',
+                '    nums.sort()',
+                '    result = []',
+                '    n = len(nums)',
+                '    for i in range(n - 2):',
+                '        if i > 0 and nums[i] == nums[i-1]:',
+                '            continue',
+                '        left, right = i + 1, n - 1',
+                '        while left < right:',
+                '            total = nums[i] + nums[left] + nums[right]',
+                '            if total == target:',
+                '                result.append([nums[i], nums[left], nums[right]])',
+                '                while left < right and nums[left] == nums[left+1]:',
+                '                    left += 1',
+                '                while left < right and nums[right] == nums[right-1]:',
+                '                    right -= 1',
+                '                left += 1',
+                '                right -= 1',
+                '            elif total < target:',
+                '                left += 1',
+                '            else:',
+                '                right -= 1',
+                '    return result',
+                '',
+            ])
+        elif 'trap' in desc_lower and 'water' in desc_lower:
+            lines.extend([
+                f'def {func_name}(heights):',
+                '    """Calculate trapped rainwater."""',
+                '    if not heights:',
+                '        return 0',
+                '    n = len(heights)',
+                '    left_max = [0] * n',
+                '    right_max = [0] * n',
+                '    left_max[0] = heights[0]',
+                '    for i in range(1, n):',
+                '        left_max[i] = max(left_max[i-1], heights[i])',
+                '    right_max[n-1] = heights[n-1]',
+                '    for i in range(n-2, -1, -1):',
+                '        right_max[i] = max(right_max[i+1], heights[i])',
+                '    water = 0',
+                '    for i in range(n):',
+                '        water += min(left_max[i], right_max[i]) - heights[i]',
+                '    return water',
+                '',
+            ])
+        elif 'median' in desc_lower and 'sorted' in desc_lower and 'array' in desc_lower:
+            lines.extend([
+                f'def {func_name}(nums1, nums2):',
+                '    """Find median of two sorted arrays."""',
+                '    merged = []',
+                '    i = j = 0',
+                '    while i < len(nums1) and j < len(nums2):',
+                '        if nums1[i] <= nums2[j]:',
+                '            merged.append(nums1[i])',
+                '            i += 1',
+                '        else:',
+                '            merged.append(nums2[j])',
+                '            j += 1',
+                '    merged.extend(nums1[i:])',
+                '    merged.extend(nums2[j:])',
+                '    n = len(merged)',
+                '    if n % 2 == 1:',
+                '        return float(merged[n // 2])',
+                '    return (merged[n // 2 - 1] + merged[n // 2]) / 2.0',
                 '',
             ])
         else:
