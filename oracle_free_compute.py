@@ -30,13 +30,13 @@ class OracleHuggingFaceSystem:
         }
 
         # HuggingFace token for free API
-        self.hf_token = "$(HF_TOKEN)"
+        self.hf_token = os.getenv("HF_TOKEN", "")
 
         # Other free/cheap APIs
         self.apis = {
-            "gemini": "REDACTED_GEMINI_KEY",
-            "deepseek": "REDACTED_DEEPSEEK_KEY",
-            "alibaba": "REDACTED_ALIBABA_KEY"
+            "gemini": os.getenv("GEMINI_API_KEY", ""),
+            "deepseek": os.getenv("DEEPSEEK_API_KEY", ""),
+            "alibaba": os.getenv("ALIBABA_API_KEY", "")
         }
 
         logger.info("🌩️ Oracle Cloud + HuggingFace FREE system initialized")
@@ -122,8 +122,8 @@ class UltraFreeExecutor:
     """Executor using ONLY free resources"""
 
     def __init__(self):
-        self.hf_token = "$(HF_TOKEN)"
-        self.gemini_key = "REDACTED_GEMINI_KEY"
+        self.hf_token = os.getenv("HF_TOKEN", "")
+        self.gemini_key = os.getenv("GEMINI_API_KEY", "")
         self.total_cost = 0.0
         self.providers_used = {"huggingface": 0, "gemini": 0, "local": 0}
 
